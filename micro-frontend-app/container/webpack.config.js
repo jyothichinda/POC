@@ -1,5 +1,6 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
+const dependencies = require("./package.json");
 
 module.exports = {
   mode: "development",
@@ -15,14 +16,18 @@ module.exports = {
     new ModuleFederationPlugin({
       name: "container",
       filename: "remoteEntry.js",
-      // remotes: {
-      //   dashboard: "dashboard@http://localhost:3001/remoteEntry.js",
-      // },
+      remotes: {
+        auth: "auth@http://localhost:3001/remoteEntry.js",
+        dashboard: "dashboard@http://localhost:3002/remoteEntry.js",
+      },
       shared: {
-        react: { singleton: true, requiredVersion: "^19.0.0" },
-        "react-dom": { singleton: true, requiredVersion: "^19.0.0" },
-        swr: { singleton: true, requiredVersion: "^2.3.2" },
-        antd: { singleton: true, requiredVersion: "^5.24.1" },
+        react: { singleton: true, requiredVersion: dependencies.react },
+        "react-dom": {
+          singleton: true,
+          requiredVersion: dependencies["react-dom"],
+        },
+        swr: { singleton: true, requiredVersion: dependencies.swr },
+        antd: { singleton: true, requiredVersion: dependencies.antd },
       },
     }),
     new HtmlWebpackPlugin({
@@ -32,7 +37,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.m?js?$/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",

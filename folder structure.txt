@@ -1,0 +1,56 @@
+micro-frontend-app:
+    container
+        public
+            index.html
+        src
+            components
+                DashboardApp.js
+                Header.js
+                Loader.css 
+                Loader.js
+                SideNav.js
+            config
+                navConfig.js
+                pageConfig.js
+            pages
+                AdminConfigPage.js
+            store
+                authStore.js
+                layoutStore.js
+            App.js
+            bootstrap.js
+            index.js
+            routes.js
+            styles.js
+        package.json
+        webpack.config.js
+    micro-frontend-admin
+        public
+            index.html
+        src
+            components
+                
+        App.js
+        bootstrap.js
+        index.js
+    package.json
+    webpack.config.js
+    micro-frontend-auth
+        public
+            index.html
+        src
+            components
+                
+        App.js
+        bootstrap.js
+        index.js
+    package.json
+    webpack.config.js
+    micro-frontend-cashflowforecast
+    micro-frontend-configurations
+    micro-frontend-dashboard
+    micro-frontend-pooling
+    micro-frontend-sweep
+    micro-frontend-transactions
+
+    

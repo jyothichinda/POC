@@ -4,7 +4,7 @@ const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPl
 module.exports = {
   mode: "development",
   devServer: {
-    port: 3001,
+    port: 3002,
   },
   entry: "./src/index.js",
   output: {
@@ -15,7 +15,7 @@ module.exports = {
       name: "dashboard",
       filename: "remoteEntry.js",
       exposes: {
-        "./DashboardPage": "./src/App",
+        "./DashboardPage": "./src/bootstrap",
       },
       shared: {
         react: { singleton: true, requiredVersion: "^19.0.0" },
@@ -31,10 +31,14 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx?/,
+        test: /\.m?js?/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
+          options:{
+            presets: ["@babel/preset-react","@babel/preset-env"],
+            plugins: ["@babel/plugin-transform-runtime"]
+          }
         },
       },
       {

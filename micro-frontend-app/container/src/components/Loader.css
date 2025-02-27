@@ -1,0 +1,47 @@
+*, *:before, *:after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  html, body {
+    font-size: 62.5%;
+    height: 100%;
+    overflow: hidden;
+    background: #7981B2;
+  }
+  
+  .loader-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  #outline {
+    stroke-dasharray: 242.776657104492px 242.776657104492px;
+    stroke-dashoffset: 0;
+    animation: anim 1.6s linear infinite;
+    stroke: #e81111;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-miterlimit: 10;
+  }
+  
+  @keyframes anim {
+    12.5% {
+      stroke-dasharray: 34px 242.776657104492px;
+      stroke-dashoffset: -26.5px;
+    }
+    43.75% {
+      stroke-dasharray: 85px 242.776657104492px;
+      stroke-dashoffset: -85px;
+    }
+    100% {
+      stroke-dasharray: 2.5px 242.776657104492px;
+      stroke-dashoffset: -240px;
+    }
+  }
+  
+  

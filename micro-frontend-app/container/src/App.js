@@ -1,12 +1,15 @@
-import React, { Suspense } from "react";
+import React, { lazy,Suspense } from "react";
+import {unstable_HistoryRouter as Router, Routes,Route} from 'react-router-dom'
+import LoginPage from "./pages/LoginPage";
 
-const DashboardApp = React.lazy(() => import("microfrontend1/DashboardApp"));
 
 const App = () => {
   <div>
-    <h1>Container App</h1>
-    <Suspense fallback={<div>Loading....</div>}>
+    <h1>LQM App</h1>
+    <Suspense fallback={<InfinityLoader />}>
+    <div style={styles.container}>
       <DashboardApp />
+    </div>
     </Suspense>
   </div>;
 };
