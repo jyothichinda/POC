@@ -10,6 +10,10 @@ module.exports = {
   output: {
     publicPath: "auto",
   },
+  resolve: {
+    extensions: [".js", ".jsx", ".ts", ".tsx"], // Ensure .tsx is included
+  },
+  
   plugins: [
     new ModuleFederationPlugin({
       name: "dashboard",

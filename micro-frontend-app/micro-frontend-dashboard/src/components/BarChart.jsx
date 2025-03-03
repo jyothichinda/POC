@@ -62,7 +62,7 @@ const BarChartContainer = (props) => {
           dataKey="amount"
           position="inside"
           fill="black"
-          fontSize={7}
+          fontSize={9}
         />
       </Bar>
     </BarChart>

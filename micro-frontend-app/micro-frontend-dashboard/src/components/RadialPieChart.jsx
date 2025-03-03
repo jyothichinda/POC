@@ -3,7 +3,7 @@ import Chart from "react-apexcharts";
 
 import { CashTotal } from "../utils/formatData";
 
-const RadialPieChartContainer = ({ data }) => {
+const RadialPieChartContainer = ({ data ,type}) => {
   const cashTotal = CashTotal(data);
   const labels = data.map((item) => item.title);
   const series = data.map((item) =>
@@ -25,7 +25,7 @@ const RadialPieChartContainer = ({ data }) => {
         },
         legend: {
           show: true,
-          position: "right",
+          position: "bottom",
           horizontalAlign: "center",
           floating: false, // Ensures the legend floats instead of stacking
           markers: { radius: 2 }, // Adjust marker shape
@@ -35,7 +35,7 @@ const RadialPieChartContainer = ({ data }) => {
       }}
       series={series}
       type="radialBar"
-      height={"50%"}
+      height= {type === "row"?"100%":"50%"}
       width={"100%"}
     />
   );
