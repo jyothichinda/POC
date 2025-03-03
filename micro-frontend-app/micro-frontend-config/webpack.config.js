@@ -16,10 +16,10 @@ module.exports = {
   
   plugins: [
     new ModuleFederationPlugin({
-      name: "cashReserves",
+      name: "configurations",
       filename: "remoteEntry.js",
       exposes: {
-        "./CashReservesPage": "./src/bootstrap",
+        "./ConfigurationsPage": "./src/bootstrap",
       },
       shared: {
         react: { singleton: true, requiredVersion: "^19.0.0" },
