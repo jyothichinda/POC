@@ -20,7 +20,7 @@ module.exports = {
         // auth: "auth@http://localhost:3001/remoteEntry.js",
         dashboard: "dashboard@http://localhost:3002/remoteEntry.js",
         transactions: "transactions@http://localhost:3003/remoteEntry.js",
-        cashflowforecast:
+        forecast:
           "cashflowforecast@http://localhost:3008/remoteEntry.js",
         cashReserves: "cashReserves@http://localhost:3006/remoteEntry.js",
         configurations: "configurations@http://localhost:3007/remoteEntry.js",
