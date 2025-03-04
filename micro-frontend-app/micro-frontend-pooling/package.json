@@ -1,5 +1,5 @@
 {
-  "name": "micro-frontend-transactions",
+  "name": "micro-frontend-pooling",
   "version": "1.0.0",
   "main": "webpack.config.js",
   "scripts": {
