@@ -35,35 +35,6 @@ const allColumns = [
   { title: "Action", dataIndex: "action", key: "action" },
 ];
 
-const data = [
-  {
-    sweep: "ABC",
-    master: "ABC BANK",
-    currency: "USD",
-    direction: "One-Way",
-    frequency: "Daily",
-    status: "InActive",
-    execution: "02/27/2025",
-    threshold: "$50,000",
-    date: "02/25/2025",
-    transfer: "Yes",
-    action: "View / Edit",
-  },
-  {
-    sweep: "DEF",
-    master: "DEF BANK",
-    currency: "INR",
-    direction: "Bi-Directional",
-    frequency: "Weekly",
-    status: "Active",
-    execution: "02/27/2025",
-    threshold: "",
-    date: "",
-    transfer: "",
-    action: "",
-  },
-];
-
 // Sortable item component
 const SortableItem = ({ column, isChecked, onToggle }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -103,7 +74,7 @@ const SortableItem = ({ column, isChecked, onToggle }) => {
   );
 };
 
-const TransactionsTable = () => {
+const SweepingTable = ({ data }) => {
   // Load preferences from local storage
   const savedColumns =
     JSON.parse(localStorage.getItem("selectedColumns")) ||
@@ -148,9 +119,9 @@ const TransactionsTable = () => {
   // Handle column reordering
   const handleDragEnd = (event) => {
     const { active, over } = event;
-    if (active.sweep !== over.sweep) {
-      const oldIndex = columnsOrder.findIndex((col) => col.key === active.sweep);
-      const newIndex = columnsOrder.findIndex((col) => col.key === over.sweep);
+    if (active.id !== over.id) {
+      const oldIndex = columnsOrder.findIndex((col) => col.key === active.id);
+      const newIndex = columnsOrder.findIndex((col) => col.key === over.id);
       setColumnsOrder(arrayMove(columnsOrder, oldIndex, newIndex));
     }
   };
@@ -218,7 +189,7 @@ const TransactionsTable = () => {
         </DndContext>
       </Modal>
 
-      {/* Transactions Table */}
+      {/* Sweeping Table */}
       <Table
         columns={filteredColumns}
         dataSource={data.map((record, index) => ({
@@ -231,4 +202,4 @@ const TransactionsTable = () => {
   );
 };
 
-export default TransactionsTable;
+export default SweepingTable;

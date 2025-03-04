@@ -25,7 +25,11 @@ const allColumns = [
   { title: "Pool Name", dataIndex: "name", key: "name" },
   { title: "Master Account", dataIndex: "master", key: "master" },
   { title: "Currency", dataIndex: "currency", key: "currency" },
-  { title: "Participating Accounts", dataIndex: "participating", key: "participating" },
+  {
+    title: "Participating Accounts",
+    dataIndex: "participating",
+    key: "participating",
+  },
   { title: "Status", dataIndex: "status", key: "status" },
   { title: "Next Execution", dataIndex: "execute", key: "execute" },
   { title: "Balance", dataIndex: "balance", key: "balance" },
@@ -34,38 +38,6 @@ const allColumns = [
   { title: "Interest Rate(%)", dataIndex: "interest", key: "interest" },
   { title: "Auto-Rebalancing", dataIndex: "rebalancing", key: "rebalancing" },
   { title: "Action", dataIndex: "action", key: "action" },
-
-];
-
-const data = [
-  {
-    name: "ABC",
-    master: "ABC Bank",
-    currency: "USD",
-    participating: "ABC-1, ABC-2",
-    status: "Active",
-    execute: "02/27/2025",
-    balance: "$500,000",
-    liquidity: "$100,000",
-    update: "02/25/2025",
-    interest: "1.5%",
-    rebalancing: "Yes",
-    action: "View / Edit",
-  },
-  {
-    name: "DEF",
-    master: "DEF Bank",
-    currency: "INR",
-    participating: "",
-    status: "InActive",
-    execute: "",
-    balance: "",
-    liquidity: "",
-    update: "",
-    interest: "",
-    rebalancing: "",
-    action: "",
-  },
 ];
 
 // Sortable item component
@@ -107,7 +79,7 @@ const SortableItem = ({ column, isChecked, onToggle }) => {
   );
 };
 
-const PoolingTable = () => {
+const PoolingTable = ({ data }) => {
   // Load preferences from local storage
   const savedColumns =
     JSON.parse(localStorage.getItem("selectedColumns")) ||
