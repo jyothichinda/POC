@@ -47,10 +47,11 @@ micro-frontend-app:
     package.json
     webpack.config.js
     micro-frontend-cashflowforecast
+    micro-frontend-cashReserves
     micro-frontend-configurations
     micro-frontend-dashboard
     micro-frontend-pooling
-    micro-frontend-sweep
+    micro-frontend-sweeping
     micro-frontend-transactions
 
     
