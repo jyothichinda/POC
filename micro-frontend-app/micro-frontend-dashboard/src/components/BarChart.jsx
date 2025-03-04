@@ -24,7 +24,7 @@ const BarChartContainer = (props) => {
   }));
 
   return (
-    <BarChart width={200} height={100} data={chartData} layout="vertical">
+    <BarChart width={200} height={128} data={chartData} layout="vertical">
       {/* X-Axis (Percentage Scale) */}
       <XAxis
         type="number"
