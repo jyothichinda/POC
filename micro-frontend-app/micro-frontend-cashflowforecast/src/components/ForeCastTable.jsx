@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Table, Modal, Button, Card } from "antd";
-import {
-  SettingOutlined,
-  MinusSquareOutlined,
-  PlusSquareOutlined,
-} from "@ant-design/icons";
+import { Table, Modal, Button, Card, Checkbox } from "antd";
+import { SettingOutlined } from "@ant-design/icons";
 import {
   DndContext,
   closestCenter,
@@ -28,103 +24,29 @@ const allColumns = [
   { title: "Cash Inflow", dataIndex: "inflow", key: "inflow" },
   { title: "Cash Outflow", dataIndex: "outflow", key: "outflow" },
   { title: "Status", dataIndex: "status", key: "status" },
-  { title: "Expected Settlement Date", dataIndex: "settlementDate", key: "settlementDate" },
+  {
+    title: "Expected Settlement Date",
+    dataIndex: "settlementDate",
+    key: "settlementDate",
+  },
   { title: "Comments", dataIndex: "comments", key: "comments" },
 ];
 
-const data = [
-  {
-    id: "MSG123",
-    instrument: "Cash Receipts from customer",
-    network: "ACH",
-    inflow: '$10,000',
-    outflow:'$0',
-    status: "Completed",
-    settlementDate: "03/03/2025 11:35:27",
-  },
-  {
-    id: "MSG234",
-    instrument: "Cash Payments from supplier",
-    network: "FED",
-    inflow: '$0',
-    outflow:'$20,000',
-    status: "Pending",
-    settlementDate: "03/03/2025 21:35:27",
-  },
-];
-
-// Sortable item component
-const SortableItem = ({ column, isChecked, onToggle }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: column.key });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    padding: 10,
-    marginBottom: 8,
-    cursor: "grab",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: isChecked ? "#e6f7ff" : "#f0f0f0",
-    borderRadius: 5,
-  };
-
-  return (
-    <Card ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        {/* Toggle between Plus and Minus Icons */}
-        {isChecked ? (
-          <MinusSquareOutlined
-            style={{ color: "red", fontSize: 18, cursor: "pointer" }}
-            onClick={() => onToggle(column.key)}
-          />
-        ) : (
-          <PlusSquareOutlined
-            style={{ color: "green", fontSize: 18, cursor: "pointer" }}
-            onClick={() => onToggle(column.key)}
-          />
-        )}
-        <span>{column.title}</span>
-      </div>
-    </Card>
-  );
-};
-
-const TransactionsTable = () => {
-  // Load preferences from local storage
+const ForeCastTable = ({ data }) => {
+  // Load preferences from localStorage or use default values
   const savedColumns =
-    JSON.parse(localStorage.getItem("selectedColumns")) ||
+    JSON.parse(localStorage.getItem("selectedForecastColumns")) ||
     allColumns.map((col) => col.key);
   const savedOrder =
-    JSON.parse(localStorage.getItem("columnOrder")) || allColumns;
+    JSON.parse(localStorage.getItem("forecastColumnOrder")) || allColumns;
 
-  const [selectedColumns, setSelectedColumns] = useState(savedColumns);
+  const [selectedColumns, setSelectedColumns] = useState(new Set(savedColumns));
   const [columnsOrder, setColumnsOrder] = useState(savedOrder);
   const [modalVisible, setModalVisible] = useState(false);
 
-  // Persist preferences
-  useEffect(() => {
-    localStorage.setItem("selectedColumns", JSON.stringify(selectedColumns));
-    localStorage.setItem("columnOrder", JSON.stringify(columnsOrder));
-  }, [selectedColumns, columnsOrder]);
-
-  // Toggle column visibility
-  const handleColumnToggle = (key) => {
-    setSelectedColumns((prevSelectedColumns) => {
-      const updatedColumns = prevSelectedColumns.includes(key)
-        ? prevSelectedColumns.filter((colKey) => colKey !== key) // Remove column when unchecked
-        : [...prevSelectedColumns, key]; // Add column when checked
-
-      console.log("Updated Columns:", updatedColumns); // Debugging log
-      return updatedColumns;
-    });
-  };
-
-  // Reset to default
+  // Reset to default settings
   const resetToDefault = () => {
-    setSelectedColumns(allColumns.map((col) => col.key));
+    setSelectedColumns(new Set(allColumns.map((col) => col.key))); // Use Set
     setColumnsOrder(allColumns);
   };
 
@@ -140,17 +62,69 @@ const TransactionsTable = () => {
     if (active.id !== over.id) {
       const oldIndex = columnsOrder.findIndex((col) => col.key === active.id);
       const newIndex = columnsOrder.findIndex((col) => col.key === over.id);
-      setColumnsOrder(arrayMove(columnsOrder, oldIndex, newIndex));
+      setColumnsOrder((prev) => arrayMove(prev, oldIndex, newIndex));
     }
   };
 
-  // Filter visible columns
+  // Toggle column visibility dynamically
+  const handleColumnToggle = (key) => {
+    setSelectedColumns((prev) => {
+      const updatedColumns = new Set(prev); // Clone the Set
+      if (updatedColumns.has(key)) {
+        updatedColumns.delete(key);
+      } else {
+        updatedColumns.add(key);
+      }
+      return new Set(updatedColumns); // Ensure state updates correctly
+    });
+  };
+
+  // Filter visible columns dynamically
   const filteredColumns = columnsOrder.filter((col) =>
-    selectedColumns.includes(col.key)
+    selectedColumns.has(col.key)
   );
 
+  // Sortable Column Component
+  const SortableItem = ({ column, isChecked, onToggle }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } =
+      useSortable({ id: column.key });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+      padding: 10,
+      marginBottom: 8,
+      cursor: "grab",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      backgroundColor: isChecked ? "#e6f7ff" : "#f0f0f0",
+      borderRadius: 5,
+    };
+
+    // Persist preferences in local storage
+    useEffect(() => {
+      localStorage.setItem(
+        "selectedForecastColumns",
+        JSON.stringify([...selectedColumns])
+      );
+      localStorage.setItem("forecastColumnOrder", JSON.stringify(columnsOrder));
+    }, [selectedColumns, columnsOrder]);
+
+    return (
+      <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+        <Checkbox
+          checked={selectedColumns.has(column.key)}
+          onChange={() => onToggle(column.key)}
+        >
+          {column.title}
+        </Checkbox>
+      </div>
+    );
+  };
+
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px", width: "100%" }}>
       {/* Settings Button */}
       <div
         style={{
@@ -199,7 +173,7 @@ const TransactionsTable = () => {
               <SortableItem
                 key={column.key}
                 column={column}
-                isChecked={selectedColumns.includes(column.key)}
+                isChecked={selectedColumns.has(column.key)}
                 onToggle={handleColumnToggle}
               />
             ))}
@@ -212,12 +186,12 @@ const TransactionsTable = () => {
         columns={filteredColumns}
         dataSource={data.map((record, index) => ({
           ...record,
-          key: record.id || index, // Ensure key is unique
+          key: record.id || index,
         }))}
-        rowKey="key" // Explicitly tell AntD which field is the unique key
+        rowKey="key"
       />
     </div>
   );
 };
 
-export default TransactionsTable;
+export default ForeCastTable;
