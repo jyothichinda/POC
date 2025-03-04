@@ -4,7 +4,7 @@ const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPl
 module.exports = {
   mode: "development",
   devServer: {
-    port: 3008,
+    port: 3007,
   },
   entry: "./src/index.js",
   output: {
@@ -16,10 +16,10 @@ module.exports = {
   
   plugins: [
     new ModuleFederationPlugin({
-      name: "forecast",
+      name: "cashReserves",
       filename: "remoteEntry.js",
       exposes: {
-        "./ForecastPage": "./src/bootstrap",
+        "./CashReservesPage": "./src/bootstrap",
       },
       shared: {
         react: { singleton: true, requiredVersion: "^19.0.0" },
