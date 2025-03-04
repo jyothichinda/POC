@@ -179,11 +179,16 @@ const PoolingTable = ({ data }) => {
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={columns}
+            items={columnsOrder.map((col) => col.key)}
             strategy={verticalListSortingStrategy}
           >
-            {columns.map((column, index) => (
-              <DraggableColumn key={column} column={column} index={index} />
+            {columnsOrder.map((column) => (
+              <SortableItem
+                key={column.key}
+                column={column}
+                isChecked={selectedColumns.includes(column.key)}
+                onToggle={handleColumnToggle}
+              />
             ))}
           </SortableContext>
         </DndContext>

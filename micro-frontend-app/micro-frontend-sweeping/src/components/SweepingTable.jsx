@@ -119,11 +119,9 @@ const SweepingTable = ({ data }) => {
   // Handle column reordering
   const handleDragEnd = (event) => {
     const { active, over } = event;
-    if (active.sweep !== over.sweep) {
-      const oldIndex = columnsOrder.findIndex(
-        (col) => col.key === active.sweep
-      );
-      const newIndex = columnsOrder.findIndex((col) => col.key === over.sweep);
+    if (active.id !== over.id) {
+      const oldIndex = columnsOrder.findIndex((col) => col.key === active.id);
+      const newIndex = columnsOrder.findIndex((col) => col.key === over.id);
       setColumnsOrder(arrayMove(columnsOrder, oldIndex, newIndex));
     }
   };
