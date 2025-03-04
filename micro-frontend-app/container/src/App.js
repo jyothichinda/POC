@@ -2,12 +2,11 @@ import React, { lazy, Suspense, useState } from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { Layout, Menu, Spin } from "antd";
 import { DashboardOutlined, TransactionOutlined } from "@ant-design/icons";
-import { FaHandHoldingUsd   } from "react-icons/fa";
+import { FaHandHoldingUsd } from "react-icons/fa";
 import { AiOutlineStock } from "react-icons/ai";
 import { GrDocumentConfig } from "react-icons/gr";
 import { VscCombine } from "react-icons/vsc";
 import { GiRadarSweep } from "react-icons/gi";
-
 
 const { Header, Sider, Content } = Layout;
 
@@ -23,6 +22,16 @@ const SweepingApp = lazy(() => import("./components/SweepingApp"));
 
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const menuItems = [
+    { key: "1", icon: <DashboardOutlined />, label: <Link to="/">Dashboard</Link> },
+    { key: "2", icon: <TransactionOutlined />, label: <Link to="/transactions">Transactions</Link> },
+    { key: "3", icon: <AiOutlineStock />, label: <Link to="/forecast">Cash Flow Forecast</Link> },
+    { key: "4", icon: <FaHandHoldingUsd />, label: <Link to="/reserves">Cash Reserves</Link> },
+    { key: "5", icon: <GrDocumentConfig />, label: <Link to="/configurations">Configurations</Link> },
+    { key: "6", icon: <VscCombine />, label: <Link to="/pooling">Cash Pooling</Link> },
+    { key: "7", icon: <GiRadarSweep />, label: <Link to="/sweeping">Cash Sweeping</Link> },
+  ];
+  
 
   return (
     <BrowserRouter>
@@ -35,29 +44,13 @@ const App = () => {
           >
             LQM App
           </div>
-          <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
-            <Menu.Item key="1" icon={<DashboardOutlined />}>
-              <Link to="/">Dashboard</Link>
-            </Menu.Item>
-            <Menu.Item key="2" icon={<TransactionOutlined />}>
-              <Link to="/transactions">Transactions</Link>
-            </Menu.Item>
-            <Menu.Item key="3" icon={<AiOutlineStock  />}>
-              <Link to="/forecast">Cash Flow Forecast</Link>
-            </Menu.Item>
-            <Menu.Item key="4" icon={<FaHandHoldingUsd />}>
-              <Link to="/reserves">Cash Reserves</Link>
-            </Menu.Item>
-            <Menu.Item key="5" icon={<GrDocumentConfig />}>
-              <Link to="/configurations">Configurations</Link>
-            </Menu.Item>
-            <Menu.Item key="6" icon={<VscCombine />}>
-              <Link to="/pooling">Cash Pooling</Link>
-            </Menu.Item>
-            <Menu.Item key="7" icon={<GiRadarSweep />}>
-              <Link to="/sweeping">Cash Sweeping</Link>
-            </Menu.Item>
-          </Menu>
+
+          <Menu
+            theme="dark"
+            mode="inline"
+            defaultSelectedKeys={["1"]}
+            items={menuItems}
+          />
         </Sider>
 
         <Layout>

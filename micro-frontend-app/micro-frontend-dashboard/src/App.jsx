@@ -18,7 +18,9 @@ const { Option } = Select;
 const App = () => {
   const [loading, setLoading] = useState(true);
   const timezones = moment.tz.names(); // Get all timezones
-  const [selectedTimezone, setSelectedTimezone] = useState("UTC");
+  const [selectedTimezone, setSelectedTimezone] = useState(
+    localStorage.getItem("selectedTimezone") || "UTC"
+  );
   const [currentTime, setCurrentTime] = useState(moment().tz(selectedTimezone));
 
   useEffect(() => {
@@ -253,6 +255,11 @@ const App = () => {
     ["Current Cash OutFlow", "Projected Cash Outflow"].includes(item.title)
   );
 
+  const handleTimezoneChange = (value) => {
+    setSelectedTimezone(value);
+    localStorage.setItem("selectedTimezone", value); // Save to localStorage
+  };
+
   useEffect(() => {
     // Update time every second
     const interval = setInterval(() => {
@@ -280,7 +287,7 @@ const App = () => {
           style={{ width: 150 }}
           placeholder="Select a Timezone"
           value={selectedTimezone}
-          onChange={setSelectedTimezone}
+          onChange={handleTimezoneChange}
           filterOption={(input, option) =>
             option?.value.toLowerCase().includes(input.toLowerCase())
           }
