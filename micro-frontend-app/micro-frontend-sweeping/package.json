@@ -1,5 +1,5 @@
 {
-  "name": "micro-frontend-transactions",
+  "name": "micro-frontend-sweeping",
   "version": "1.0.0",
   "main": "webpack.config.js",
   "scripts": {
