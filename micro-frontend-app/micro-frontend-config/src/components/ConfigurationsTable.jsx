@@ -24,26 +24,17 @@ import { CSS } from "@dnd-kit/utilities";
 const allColumns = [
   { title: "Control Name", dataIndex: "name", key: "name" },
   { title: "Status", dataIndex: "status", key: "status" },
-  { title: "Last Updated By", dataIndex: "lastUpdatedBy", key: "lastUpdatedBy" },
-  { title: "Last Updated Time", dataIndex: "lastUpdatedAt", key: "lastUpdatedAt" },
+  {
+    title: "Last Updated By",
+    dataIndex: "lastUpdatedBy",
+    key: "lastUpdatedBy",
+  },
+  {
+    title: "Last Updated Time",
+    dataIndex: "lastUpdatedAt",
+    key: "lastUpdatedAt",
+  },
   { title: "Action", dataIndex: "action", key: "action" },
-];
-
-const data = [
-  {
-    name: "Master System Decisions",
-    status: "System",
-    lastUpdatedBy:"Admin",
-    lastUpdatedAt: "03/03/2025 11:35:27",
-    action: "",
-  },
-  {
-    name: "Master Manual Throttle",
-    status: "System",
-    lastUpdatedBy:"Admin",
-    lastUpdatedAt: "03/03/2025 21:35:27",
-    action: "",
-  },
 ];
 
 // Sortable item component
@@ -85,7 +76,7 @@ const SortableItem = ({ column, isChecked, onToggle }) => {
   );
 };
 
-const ConfigurationsTable = () => {
+const ConfigurationsTable = ({ data }) => {
   // Load preferences from local storage
   const savedColumns =
     JSON.parse(localStorage.getItem("selectedColumns")) ||
