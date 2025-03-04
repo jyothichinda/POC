@@ -53,7 +53,7 @@ const AreaChartContainer = ({ data }) => {
       ]}
       type="area"
       height="100%"
-      width="80%"
+      width="100%"
     />
   );
 };
