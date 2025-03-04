@@ -33,31 +33,6 @@ const allColumns = [
   { title: "Action", dataIndex: "action", key: "action" },
 ];
 
-const data = [
-  {
-    name: "Emergency Fund",
-    master: "XYZ LTD",
-    currency: "USD",
-    amount: 500,
-    minRequired: 100,
-    status: "Completed",
-    lastUpdated: "03/03/2025 11:35:27",
-    autoRefill: true,
-    action: "",
-  },
-  {
-    name: "Tax Reserve Fund",
-    master: "DEF LTD",
-    currency: "INR",
-    amount: 400,
-    minRequired: 170,
-    status: "Pending",
-    lastUpdated: "03/03/2025 11:35:27",
-    autoRefill: false,
-    action: "",
-  },
-];
-
 // Sortable item component
 const SortableItem = ({ column, isChecked, onToggle }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -97,7 +72,7 @@ const SortableItem = ({ column, isChecked, onToggle }) => {
   );
 };
 
-const ReservesTable = () => {
+const ReservesTable = ({ data }) => {
   // Load preferences from local storage
   const savedColumns =
     JSON.parse(localStorage.getItem("selectedColumns")) ||
