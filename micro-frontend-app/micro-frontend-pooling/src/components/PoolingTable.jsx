@@ -25,11 +25,7 @@ const allColumns = [
   { title: "Pool Name", dataIndex: "name", key: "name" },
   { title: "Master Account", dataIndex: "master", key: "master" },
   { title: "Currency", dataIndex: "currency", key: "currency" },
-  {
-    title: "Participating Accounts",
-    dataIndex: "participating",
-    key: "participating",
-  },
+  { title: "Participating Accounts", dataIndex: "participating", key: "participating"},
   { title: "Status", dataIndex: "status", key: "status" },
   { title: "Next Execution", dataIndex: "execute", key: "execute" },
   { title: "Balance", dataIndex: "balance", key: "balance" },
