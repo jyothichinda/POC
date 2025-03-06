@@ -26,16 +26,8 @@ const App = () => {
       console.log("Payment Update Received:", event);
       try {
         const newData = JSON.parse(event.data);
-        console.log("Parsed Payment Data:", newData);
         // Ensure uniqueness using msgId
-        setData((prev) => {
-          const existingIds = new Set(prev.map((item) => item.id)); // Store existing msgIds
-          const filteredNewData = newData.filter(
-            (item) => !existingIds.has(item.msgId)
-          ); // Remove duplicates
-
-          return [...prev, ...filteredNewData]; // Append only unique records
-        });
+        setData(newData);
       } catch (error) {
         console.error("Error parsing SSE data:", error);
       }
