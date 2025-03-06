@@ -1,0 +1,116 @@
+{
+  "summaryMetrics": {
+    "openingBalance": 12500,
+    "expectedCashInflow": 8000,
+    "expectedCashOutflow": 6500,
+    "netCashFlow": 1500,
+    "aiForecast": {
+      "accuracy": 92,
+      "riskAlerts": [
+        {
+          "type": "High Outflow",
+          "message": "Projected expenses exceed inflows for the next 3 days.",
+          "severity": "warning"
+        },
+        {
+          "type": "Unusual Transaction",
+          "message": "A large unexpected inflow detected from an unknown source.",
+          "severity": "info"
+        }
+      ]
+    }
+  }
+}
+{
+  "realTimeInsights": {
+    "hourlyCashFlow": [
+      { "hour": "00:00", "inflow": 500, "outflow": 200 },
+      { "hour": "01:00", "inflow": 300, "outflow": 150 },
+      { "hour": "02:00", "inflow": 100, "outflow": 120 },
+      { "hour": "03:00", "inflow": 400, "outflow": 250 }
+    ],
+    "incomingTransactions": [
+      {
+        "id": "TXN001",
+        "amount": 2000,
+        "payer": "Client A",
+        "status": "Pending",
+        "dueDate": "2025-03-06"
+      },
+      {
+        "id": "TXN002",
+        "amount": 1500,
+        "payer": "Client B",
+        "status": "Completed",
+        "date": "2025-03-05"
+      }
+    ],
+    "pendingPayments": [
+      {
+        "id": "PAY001",
+        "amount": 1200,
+        "recipient": "Supplier X",
+        "status": "Pending",
+        "dueDate": "2025-03-07"
+      }
+    ],
+    {
+    "expenseBreakdown": {
+    "name": "Total Expenses",
+    "children": [
+      {
+        "name": "Fixed Costs",
+        "children": [
+          { "name": "Salaries", "value": 4000 },
+          { "name": "Rent", "value": 2000 }
+        ]
+      },
+      {
+        "name": "Variable Costs",
+        "children": [
+          { "name": "Inventory", "value": 3000 },
+          { "name": "Utilities", "value": 1500 },
+          { "name": "Marketing", "children": [
+              { "name": "Digital Ads", "value": 500 },
+              { "name": "Print Media", "value": 500 }
+          ]}
+        ]
+      }
+    ]
+  }
+}
+
+  }
+}
+{
+  "historicalTrends": {
+    "last7DaysCashFlow": [
+      { "date": "2025-02-28", "inflow": 7000, "outflow": 5000 },
+      { "date": "2025-02-29", "inflow": 8000, "outflow": 6000 },
+      { "date": "2025-03-01", "inflow": 7500, "outflow": 6200 },
+      { "date": "2025-03-02", "inflow": 9000, "outflow": 6500 },
+      { "date": "2025-03-03", "inflow": 7200, "outflow": 5800 },
+      { "date": "2025-03-04", "inflow": 8500, "outflow": 6000 },
+      { "date": "2025-03-05", "inflow": 8800, "outflow": 6700 }
+    ],
+    "cashAvailableForOperations": {
+      "total": 9000,
+      "breakdown": [
+        { "category": "Fixed Costs", "amount": 5000 },
+        { "category": "Variable Costs", "amount": 2500 },
+        { "category": "Available Cash", "amount": 1500 }
+      ]
+    },
+    "liquidityRisk": {
+      "liquidityRatio": 78,
+      "riskLevel": "Moderate",
+      "alerts": [
+        {
+          "type": "Low Liquidity",
+          "message": "Liquidity Ratio has dropped below 80%, monitor closely.",
+          "severity": "warning"
+        }
+      ]
+    }
+  }
+}

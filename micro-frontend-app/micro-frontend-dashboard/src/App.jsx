@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Layout, Row, Col, Select, Typography, Card } from "antd";
 import moment from "moment-timezone";
+import { Tabs } from "antd";
 
 import DashBoardSkeleton from "./components/DashboardSkeleton";
 import CardsContainer from "./components/Cards";
@@ -38,6 +39,7 @@ const App = () => {
       cashFlowType: "inflow",
       stats: "+5% over prev hour",
       currency: "USD",
+      date: "",
     },
     {
       id: 2,
@@ -57,19 +59,16 @@ const App = () => {
     },
     {
       id: 4,
-      title: "Current Cash Reserve",
-      amount: "64000.00",
-      cashFlowType: "inflow",
-      stats: "+3% over prev hour",
-      currency: "USD",
-    },
-    {
-      id: 5,
-      title: "Net Cash Flow",
+      title: "Projected Net Cash Flow",
       amount: "14000.00",
       cashFlowType: "inflow",
       stats: "+12% over prev hour",
       currency: "USD",
+    },
+    {
+      id: 5,
+      title: "AI Forecast Accuracy",
+      confidenceScore: "85",
     },
     {
       id: 6,
@@ -214,23 +213,39 @@ const App = () => {
           type: "column",
           data: [25000, 30000, 27000, 26000, 28000, 29000, 27000, 30000, 40000],
         },
-        {
-          name: "Net Debt to Capital",
-          type: "line",
-          data: [
-            9.09, 7.69, 8.47, 21.21, 23.29, 12.12, 29.87, 6.25, -12.68,
-          ].map((val) => val * 100),
-        },
       ],
-      options: {
-        chart: {
-          height: 350,
-          type: "line",
-        },
-        stroke: {
-          width: [0, 4],
-        },
-      },
+    },
+  ];
+  const apiIncomingTxnData = [
+    {
+      id: "MSG123",
+      amount: "$14,000",
+      payer: "ABC Corp",
+      status: "Pending",
+      date: "05/03/2024",
+    },
+    {
+      id: "MSG124",
+      amount: "$15,000",
+      payer: "ABC Corp",
+      status: "Completed",
+      date: "05/03/2024",
+    },
+  ];
+  const apiPendingPaymentData = [
+    {
+      id: "MSG123",
+      amount: "$14,000",
+      payer: "ABC Corp",
+      status: "Pending",
+      date: "06/03/2024",
+    },
+    {
+      id: "MSG124",
+      amount: "$15,000",
+      payer: "ABC Corp",
+      status: "Completed",
+      date: "06/03/2024",
     },
   ];
 
@@ -240,8 +255,8 @@ const App = () => {
       "Opening Balance",
       "Projected Cash Inflow",
       "Projected Cash Outflow",
-      "Current Cash Reserve",
-      "Net Cash Flow",
+      "Projected Net Cash Flow",
+      "AI Forecast Accuracy",
     ].includes(item.title)
   );
 
@@ -275,45 +290,55 @@ const App = () => {
     <Layout style={{ padding: "10px", maxWidth: "100%", margin: "0 auto" }}>
       {/* should add header and sidenav when integrated with main micro frontend component */}
       <Row
-        justify="end"
+        justify="space-between"
         align="stretch"
         style={{ height: "2vh", padding: "0 10px 10px", marginBottom: "2%" }}
       >
-        <Typography.Title level={2} type="success">
-          {currentTime.format("HH:mm:ss")}
+        <Typography.Title>
+          <h5>AI insights:</h5>
+          <p>{}</p>
         </Typography.Title>
-        <Select
-          showSearch
-          style={{ width: 150 }}
-          placeholder="Select a Timezone"
-          value={selectedTimezone}
-          onChange={handleTimezoneChange}
-          filterOption={(input, option) =>
-            option?.value.toLowerCase().includes(input.toLowerCase())
-          }
-        >
-          {timezones.map((zone) => (
-            <Option key={zone} value={zone}>
-              {zone}
-            </Option>
-          ))}
-        </Select>
+        <div>
+          <Typography.Title level={2} type="success">
+            {currentTime.format("HH:mm:ss")}
+          </Typography.Title>
+          <Select
+            showSearch
+            style={{ width: 150 }}
+            placeholder="Select a Timezone"
+            value={selectedTimezone}
+            onChange={handleTimezoneChange}
+            filterOption={(input, option) =>
+              option?.value.toLowerCase().includes(input.toLowerCase())
+            }
+          >
+            {timezones.map((zone) => (
+              <Option key={zone} value={zone}>
+                {zone}
+              </Option>
+            ))}
+          </Select>
+        </div>
       </Row>
       {/* ROW 1 - Cards (5 Cards, Each in 5 Columns) */}
       <Row
-        justify="space-evenly"
-        align="top"
+        gutter={[16, 16]}
+        justify="center"
         style={{ height: "25vh", width: "100%" }}
       >
         <CardsContainer cardData={cardData} />
       </Row>
       {/* Row 2 - Charts (30% height) */}
       <Row justify="space-evenly" align="top" style={{ height: "30vh" }}>
-        <Col span={12} style={{ height: "100%" }}>
+        <Col span={8} style={{ height: "100%" }}>
           <Card
             style={{
               padding: 0,
               margin: 0,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center", // Ensures content is vertically aligned
+              height: "100%",
             }}
           >
             <p
@@ -328,28 +353,46 @@ const App = () => {
             <div
               style={{ display: "flex", flexDirection: "row", height: "100%" }}
             >
-              <RadialPieChartContainer data={cashFlowData} type="row" />
               <AreaChartContainer data={apiHourlyData} />
             </div>
           </Card>
         </Col>
-        <Col span={6} style={{ height: "100%" }}>
-          <Card style={{ padding: 0, margin: 0 }}>
-            <p style={{ textAlign: "center", padding: 0, margin: 0 }}>
-              Cash InFlows
-            </p>
-
-            <RadialPieChartContainer data={cashInFlowData} />
-            <BarChartContainer data={cashInFlowData} />
+        <Col span={8} style={{ height: "100%" }}>
+          <Card
+            style={{
+              padding: 0,
+              margin: 0,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center", // Ensures content is vertically aligned
+              height: "100%",
+            }}
+          >
+            <Tabs defaultActiveKey="1" centered>
+              <Tabs.TabPane tab="Incoming Transactions" key="1">
+                <CashFlowTable data={apiIncomingTxnData} type="payments" />
+              </Tabs.TabPane>
+              <Tabs.TabPane tab="Pending Payments" key="2">
+                <CashFlowTable data={apiPendingPaymentData} type="payments" />
+              </Tabs.TabPane>
+            </Tabs>
           </Card>
         </Col>
-        <Col span={6} style={{ height: "100%" }}>
-          <Card style={{ padding: 0, margin: 0 }}>
+        <Col span={8} style={{ height: "100%" }}>
+          <Card
+            style={{
+              padding: 0,
+              margin: 0,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center", // Ensures content is vertically aligned
+              height: "100%",
+            }}
+          >
             <p style={{ textAlign: "center", padding: 0, margin: 0 }}>
               Cash OutFlows
             </p>
-            <RadialPieChartContainer data={cashOutFlowData} />
-            <BarChartContainer data={cashOutFlowData} />
+            <SunburstChart data={cashFlowData} />
           </Card>
         </Col>
       </Row>
@@ -357,18 +400,14 @@ const App = () => {
       <Row style={{ height: "30vh" }}>
         <Col span={8}>
           <Card style={{ height: "100%" }}>
-            <SunburstChart data={cashFlowData} />
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card style={{ height: "100%" }}>
-            <CashFlowTable data={apiDummyData} />
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card style={{ height: "100%" }}>
             <BarWithLineChartContainer data={apiMonthlyData[0]} />
           </Card>
+        </Col>
+        <Col span={8}>
+          <Card style={{ height: "100%" }}></Card>
+        </Col>
+        <Col span={8}>
+          <Card style={{ height: "100%" }}></Card>
         </Col>
       </Row>
     </Layout>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, Skeleton, Col, Typography } from "antd";
 import { formatCurrency } from "../utils/formatData";
+import ReactSpeedometer from "react-d3-speedometer";
 
 const CardsContainer = ({ cardData }) => {
   const [loading, setLoading] = useState(true);
@@ -35,15 +36,24 @@ const CardsContainer = ({ cardData }) => {
             }
             style={{
               width: "100%",
+              minHeight: "200px", // Ensures all cards have the same height
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             {loading ? (
               <Skeleton active paragraph={{ rows: 1 }} />
+            ) : card.title === "AI Forecast Accuracy" ? (
+              <ReactSpeedometer
+                width={150}
+                height={100}
+                value={Number(card.confidenceScore)}
+                maxValue={100}
+              />
             ) : (
-              <div>
+              <div style={{ textAlign: "center" }}>
                 <Typography.Title level={5}>
                   {formatCurrency(
                     Number(card.amount),

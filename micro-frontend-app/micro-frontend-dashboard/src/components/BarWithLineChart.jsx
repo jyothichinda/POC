@@ -31,7 +31,6 @@ const BarWithLineChartContainer = ({ data }) => {
     <ReactApexChart
       options={chartOptions}
       series={data.series}
-      type="line"
       height={350}
     />
   );

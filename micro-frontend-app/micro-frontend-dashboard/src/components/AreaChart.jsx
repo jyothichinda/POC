@@ -24,9 +24,9 @@ const AreaChartContainer = ({ data }) => {
   return (
     <Chart
       options={{
-        chart: { type: "area", toolbar: { show: false } },
+        chart: { type: "area",stacked:true, toolbar: { show: false } },
         dataLabels: { enabled: false },
-        stroke: { curve: "smooth" },
+        stroke: { curve: "smooth",width:2 },
         xaxis: {
           type: "datetime",
           categories: timeStamps,
