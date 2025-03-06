@@ -22,15 +22,23 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 const allColumns = [
-  { title: "Msg ID", dataIndex: "id", key: "id" },
-  { title: "Debtor", dataIndex: "debtor", key: "debtor" },
-  { title: "Creditor", dataIndex: "creditor", key: "creditor" },
-  { title: "Clearing Network", dataIndex: "network", key: "network" },
+  { title: "Msg ID", dataIndex: "msgId", key: "msgId" },
+  { title: "Debtor", dataIndex: "debtorName", key: "debtorName" },
+  { title: "Creditor", dataIndex: "creditorName", key: "creditorName" },
+  {
+    title: "Clearing Network",
+    dataIndex: "clearingNetwork",
+    key: "clearingNetwork",
+  },
   { title: "Tier Rank", dataIndex: "tier", key: "tier" },
   { title: "Status", dataIndex: "status", key: "status" },
   { title: "Txn Amount", dataIndex: "amount", key: "amount" },
-  { title: "Inflow/Outflow", dataIndex: "cashflow", key: "cashflow" },
-  { title: "TimeStamp", dataIndex: "time", key: "time" },
+  { title: "Inflow/Outflow", dataIndex: "cashFlow", key: "cashFlow" },
+  {
+    title: "TimeStamp",
+    dataIndex: "creationDateTime",
+    key: "creationDateTime",
+  },
 ];
 
 // Sortable item component
@@ -74,6 +82,7 @@ const SortableItem = ({ column, isChecked, onToggle }) => {
 
 const TransactionsTable = ({ data }) => {
   // Load preferences from local storage
+  const flattenedData = Array.isArray(data) && Array.isArray(data[0]) ? data.flat() : data;
   const savedColumns =
     JSON.parse(localStorage.getItem("selectedColumns")) ||
     allColumns.map((col) => col.key);
@@ -190,11 +199,11 @@ const TransactionsTable = ({ data }) => {
       {/* Transactions Table */}
       <Table
         columns={filteredColumns}
-        dataSource={data.map((record, index) => ({
+        dataSource={flattenedData.map((record, index) => ({
           ...record,
-          key: record.id || index, // Ensure key is unique
+          key: record.msgId ? `${record.msgId}-${index}` : `row-${index}`, // Ensure unique keys using msgId + index
         }))}
-        rowKey="key" // Explicitly tell AntD which field is the unique key
+        rowKey="key"
       />
     </div>
   );
