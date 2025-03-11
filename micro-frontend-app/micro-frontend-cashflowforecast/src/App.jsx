@@ -1,108 +1,117 @@
-import React, { useState, useEffect } from "react";
-import ForeCastTable from "./components/ForeCastTable";
-import CardsContainer from "./components/Cards";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Row } from "antd";
+import ActualDataTable from "./components/ActualDataTable";
+import CardsContainer from "./components/Cards";
 
 const App = () => {
   const [data, setData] = useState([
     {
-      id: "MSG123",
-      instrument: "Cash Receipts from customer",
+      id: 88,
+      msgId: "MSGIDDK00028",
+      instrument: "Tax Payment for TAX",
       network: "ACH",
-      inflow: "$10,000",
-      outflow: "$0",
-      status: "Completed",
-      settlementDate: "03/03/2025 11:35:27",
+      inflow: "925887.34",
+      outflow: "0.0",
+      status: "Processing",
+      settlementDate: [2025, 3, 11, 8, 0],
     },
     {
-      id: "MSG234",
-      instrument: "Cash Payments from supplier",
-      network: "FED",
-      inflow: "$0",
-      outflow: "$20,000",
-      status: "Pending",
-      settlementDate: "03/03/2025 21:35:27",
+      id: 89,
+      msgId: "MSGIDDK00028",
+      instrument: "Tax Payment for TAX",
+      network: "ACH",
+      inflow: "925887.34",
+      outflow: "0.0",
+      status: "Processing",
+      settlementDate: [2025, 3, 11, 8, 0],
+    },
+    {
+      id: 90,
+      msgId: "MSGIDDK00028",
+      instrument: "Tax Payment for TAX",
+      network: "ACH",
+      inflow: "925887.34",
+      outflow: "0.0",
+      status: "Processing",
+      settlementDate: [2025, 3, 11, 8, 0],
+    },
+    {
+      id: 97,
+      msgId: "MSGIDDK00028",
+      instrument: "Tax Payment for TAX",
+      network: "ACH",
+      inflow: "925887.34",
+      outflow: "0.0",
+      status: "Processing",
+      settlementDate: [2025, 3, 11, 8, 0],
     },
   ]);
-
-  const [cardData, setCardData] = useState([
-    {
-      id: 1,
-      title: "Opening Balance",
-      amount: "50000.00",
-      cashFlowType: "inflow",
-      stats: "+5% over prev hour",
-      currency: "USD",
-    },
-    {
-      id: 2,
-      title: "Total Cash Inflow",
-      amount: "32000.00",
-      cashFlowType: "inflow",
-      stats: "+8% over prev hour",
-      currency: "USD",
-    },
-    {
-      id: 3,
-      title: "Total Cash Outflow",
-      amount: "18000.00",
-      cashFlowType: "outflow",
-      stats: "+6% over prev hour",
-      currency: "USD",
-    },
-    {
-      id: 4,
-      title: "Net Cash Flow",
-      amount: "14000.00",
-      cashFlowType: "inflow",
-      stats: "+12% over prev hour",
-      currency: "USD",
-    },
-    {
-      id: 5, // Corrected missing id
-      title: "Projected Closing Balance",
-      amount: "4500.00",
-      cashFlowType: "projectedClosingBalance",
-      stats: "+7% over prev hour",
-      currency: "USD",
-    },
-  ]);
+  const [projectedData, setProjectedData] = useState({
+    projectedOpeningBalance: 2.0e8,
+    projectedCashInflow: 0.0,
+    projectedCashOutflow: 2.2e8,
+    projectedNetCashFlow: 1.0e8,
+    projectedClosingBalance: 1.0e8,
+  });
 
   useEffect(() => {
-    const eventSource = new EventSource("backend url");
+    async function fetchProjectedData() {
+      try {
+        const res = await axios.get("http://10.10.0.53:8080/projected_data");
+        console.log("Projected Data:", res.data.projectedData);
+        setProjectedData(res.data.projectedData || {});
+      } catch (error) {
+        console.error("Error fetching projected data:", error);
+      }
+    }
 
+    fetchProjectedData(); // Call async function
+
+    const eventSource = new EventSource(
+      "http://10.10.0.53:8080/flow_chart/sse"
+    );
+
+    eventSource.onopen = () => {
+      console.log("SSE Connection Opened");
+    };
+
+    // Default unnamed events
     eventSource.onmessage = (event) => {
+      console.log("onmessage triggered:", event);
+    };
+
+    // Handle 'heartbeat' event
+    eventSource.addEventListener("heartbeat", (event) => {
+      console.log("Heartbeat received:", event);
+    });
+
+    // Handle 'payment-update' event
+    eventSource.addEventListener("payment-update", (event) => {
       try {
         const newData = JSON.parse(event.data);
-
-        if (newData.type === "forecast") {
-          setData((prev) => [...prev, newData]);
-        } else if (newData.type === "cardUpdate") {
-          setCardData((prev) =>
-            prev.map((card) =>
-              card.id === newData.id ? { ...card, ...newData } : card
-            )
-          );
-        } else {
-          console.warn("Unknown data type received:", newData);
-        }
+        console.log("Payment Update Received:", newData);
+        setData(newData);
       } catch (error) {
         console.error("Error parsing SSE data:", error);
       }
-    };
+    });
 
     eventSource.onerror = (error) => {
-      console.error("SSE connection failed!", error);
+      console.error("SSE Error:", error);
       eventSource.close();
     };
 
-    return () => eventSource.close();
+    return () => {
+      console.log("Cleaning up SSE...");
+      eventSource.close();
+    };
   }, []);
 
   return (
-    <Row gutter={[16, 16]} >
-      <CardsContainer cardData={cardData} />
-      <ForeCastTable data={data} />
+    <Row gutter={[16, 16]}>
+      <CardsContainer data={data} projectedData={projectedData} />
+      <ActualDataTable data={data} />
     </Row>
   );
 };
