@@ -35,9 +35,10 @@ const allColumns = [
   { title: "Txn Amount", dataIndex: "amount", key: "amount" },
   { title: "Inflow/Outflow", dataIndex: "cashFlow", key: "cashFlow" },
   {
-    title: "TimeStamp",
+    title: "Timestamp",
     dataIndex: "creationDateTime",
     key: "creationDateTime",
+    render: (text) => (text ? new Date(text).toLocaleString() : "N/A"), // Format date
   },
 ];
 
@@ -82,7 +83,8 @@ const SortableItem = ({ column, isChecked, onToggle }) => {
 
 const TransactionsTable = ({ data }) => {
   // Load preferences from local storage
-  const flattenedData = Array.isArray(data) && Array.isArray(data[0]) ? data.flat() : data;
+  const flattenedData =
+    Array.isArray(data) && Array.isArray(data[0]) ? data.flat() : data;
   const savedColumns =
     JSON.parse(localStorage.getItem("selectedColumns")) ||
     allColumns.map((col) => col.key);
@@ -201,9 +203,8 @@ const TransactionsTable = ({ data }) => {
         columns={filteredColumns}
         dataSource={flattenedData.map((record, index) => ({
           ...record,
-          key: record.msgId ? `${record.msgId}-${index}` : `row-${index}`, // Ensure unique keys using msgId + index
+          key: record.id || `${record.msgId}-${index}`, // Ensure unique keys using msgId + index
         }))}
-        rowKey="key"
       />
     </div>
   );

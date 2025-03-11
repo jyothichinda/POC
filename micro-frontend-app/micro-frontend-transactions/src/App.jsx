@@ -5,13 +5,15 @@ const App = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const eventSource = new EventSource("http://10.10.0.53:8080/sse");
+    const eventSource = new EventSource(
+      "http://10.10.0.53:8080/transaction/sse"
+    );
 
     eventSource.onopen = () => {
       console.log("SSE Connection Opened");
     };
 
-    // Default unnamed events (your backend does NOT send these)
+    // Default unnamed events
     eventSource.onmessage = (event) => {
       console.log("onmessage triggered:", event);
     };
@@ -23,9 +25,9 @@ const App = () => {
 
     // Handle 'payment-update' event
     eventSource.addEventListener("payment-update", (event) => {
-      console.log("Payment Update Received:", event);
       try {
         const newData = JSON.parse(event.data);
+        console.log("Payment Update Received:", newData);
         // Ensure uniqueness using msgId
         setData(newData);
       } catch (error) {
