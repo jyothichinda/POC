@@ -62,7 +62,7 @@ const allColumns = [
 // Sortable item component
 const SortableItem = ({ column, isChecked, onToggle }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ sweep: column.key });
+    useSortable({ _id: column.key });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -155,6 +155,8 @@ const SweepingTable = ({ data }) => {
     selectedColumns.includes(col.key)
   );
 
+  console.log(filteredColumns);
+
   return (
     <div style={{ padding: "20px" }}>
       {/* Settings Button */}
@@ -218,7 +220,7 @@ const SweepingTable = ({ data }) => {
         columns={filteredColumns}
         dataSource={data.map((record, index) => ({
           ...record,
-          key: record.sweep || index, // Ensure key is unique
+          key: record._id || index, // Ensure key is unique
         }))}
         rowKey="key" // Explicitly tell AntD which field is the unique key
       />

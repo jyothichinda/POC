@@ -18,8 +18,19 @@ const App = () => {
         console.error("Error fetching projected data:", error);
       }
     }
+    async function fetchData() {
+      try {
+        const res = await axios.get(
+          "http://10.10.0.53:9999/api/Current_date_transactions"
+        );
+        setData(res.data || []);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
 
     fetchProjectedData(); // Call async function
+    fetchData();
 
     const eventSource = new EventSource(
       "http://10.10.0.53:9898/flow_chart/sse"
@@ -44,7 +55,10 @@ const App = () => {
       try {
         const newData = JSON.parse(event.data);
         console.log("Payment Update Received:", newData);
-        setData(newData);
+        setData((prevData) => ({
+          ...prevData,
+          ...newData,
+        }));
       } catch (error) {
         console.error("Error parsing SSE data:", error);
       }

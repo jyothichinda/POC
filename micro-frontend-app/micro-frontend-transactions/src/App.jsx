@@ -1,10 +1,23 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import TransactionsTable from "./components/TransactionsTable";
 
 const App = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await axios.get(
+          "http://10.10.0.53:9999/api/getAll_payments"
+        );
+        setData(res.data || []);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
     const eventSource = new EventSource(
       "http://10.10.0.53:9898/transaction/sse"
     );
@@ -29,7 +42,10 @@ const App = () => {
         const newData = JSON.parse(event.data);
         console.log("Payment Update Received:", newData);
         // Ensure uniqueness using msgId
-        setData(newData);
+        setData((prevData) => ({
+          ...prevData,
+          ...newData,
+        }));
       } catch (error) {
         console.error("Error parsing SSE data:", error);
       }
