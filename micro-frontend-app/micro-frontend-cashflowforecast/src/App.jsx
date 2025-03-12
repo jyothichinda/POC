@@ -50,7 +50,7 @@ const App = () => {
       console.log("Heartbeat received:", event);
     });
 
-    // Handle 'payment-update' event
+    // Handle 'transaction-update' event
     eventSource.addEventListener("transaction-update", (event) => {
       try {
         const newData = JSON.parse(event.data);
