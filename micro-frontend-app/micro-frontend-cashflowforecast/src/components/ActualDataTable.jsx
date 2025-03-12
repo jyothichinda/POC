@@ -81,8 +81,7 @@ const SortableItem = ({ column, isChecked, onToggle }) => {
 
 const ActualDataTable = ({ data }) => {
   // Load preferences from local storage
-  const flattenedData =
-    Array.isArray(data) && Array.isArray(data[0]) ? data.flat() : data;
+
   const savedColumns =
     JSON.parse(localStorage.getItem("selectedColumns")) ||
     allColumns.map((col) => col.key);
@@ -198,7 +197,7 @@ const ActualDataTable = ({ data }) => {
       {/* Transactions Table */}
       <Table
         columns={filteredColumns}
-        dataSource={flattenedData.map((record, index) => ({
+        dataSource={data.map((record, index) => ({
           ...record,
           key: record.id || `${record.msgId}-${index}`, // Ensure unique keys using msgId + index
         }))}

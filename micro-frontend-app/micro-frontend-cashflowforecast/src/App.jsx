@@ -55,10 +55,24 @@ const App = () => {
       try {
         const newData = JSON.parse(event.data);
         console.log("Payment Update Received:", newData);
-        setData((prevData) => ({
-          ...prevData,
-          ...newData,
-        }));
+        setData((prevData) => {
+          // Ensure uniqueness based on `id`
+          const updatedData = [...prevData]; // Clone previous data array
+          newData.forEach((newItem) => {
+            const existingIndex = updatedData.findIndex(
+              (item) => item.id === newItem.id
+            );
+
+            if (existingIndex !== -1) {
+              // Update existing record
+              updatedData[existingIndex] = newItem;
+            } else {
+              // Add new record
+              updatedData.push(newItem);
+            }
+          });
+          return updatedData;
+        });
       } catch (error) {
         console.error("Error parsing SSE data:", error);
       }
