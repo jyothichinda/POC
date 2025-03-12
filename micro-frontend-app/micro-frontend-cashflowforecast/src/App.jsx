@@ -5,60 +5,13 @@ import ActualDataTable from "./components/ActualDataTable";
 import CardsContainer from "./components/Cards";
 
 const App = () => {
-  const [data, setData] = useState([
-    {
-      id: 88,
-      msgId: "MSGIDDK00028",
-      instrument: "Tax Payment for TAX",
-      network: "ACH",
-      inflow: "925887.34",
-      outflow: "0.0",
-      status: "Processing",
-      settlementDate: [2025, 3, 11, 8, 0],
-    },
-    {
-      id: 89,
-      msgId: "MSGIDDK00028",
-      instrument: "Tax Payment for TAX",
-      network: "ACH",
-      inflow: "925887.34",
-      outflow: "0.0",
-      status: "Processing",
-      settlementDate: [2025, 3, 11, 8, 0],
-    },
-    {
-      id: 90,
-      msgId: "MSGIDDK00028",
-      instrument: "Tax Payment for TAX",
-      network: "ACH",
-      inflow: "925887.34",
-      outflow: "0.0",
-      status: "Processing",
-      settlementDate: [2025, 3, 11, 8, 0],
-    },
-    {
-      id: 97,
-      msgId: "MSGIDDK00028",
-      instrument: "Tax Payment for TAX",
-      network: "ACH",
-      inflow: "925887.34",
-      outflow: "0.0",
-      status: "Processing",
-      settlementDate: [2025, 3, 11, 8, 0],
-    },
-  ]);
-  const [projectedData, setProjectedData] = useState({
-    projectedOpeningBalance: 2.0e8,
-    projectedCashInflow: 0.0,
-    projectedCashOutflow: 2.2e8,
-    projectedNetCashFlow: 1.0e8,
-    projectedClosingBalance: 1.0e8,
-  });
+  const [data, setData] = useState([]);
+  const [projectedData, setProjectedData] = useState({});
 
   useEffect(() => {
     async function fetchProjectedData() {
       try {
-        const res = await axios.get("http://10.10.0.53:8080/projected_data");
+        const res = await axios.get("http://10.10.0.53:9898/projected_data");
         console.log("Projected Data:", res.data.projectedData);
         setProjectedData(res.data.projectedData || {});
       } catch (error) {
@@ -69,7 +22,7 @@ const App = () => {
     fetchProjectedData(); // Call async function
 
     const eventSource = new EventSource(
-      "http://10.10.0.53:8080/flow_chart/sse"
+      "http://10.10.0.53:9898/flow_chart/sse"
     );
 
     eventSource.onopen = () => {
@@ -87,7 +40,7 @@ const App = () => {
     });
 
     // Handle 'payment-update' event
-    eventSource.addEventListener("payment-update", (event) => {
+    eventSource.addEventListener("transaction-update", (event) => {
       try {
         const newData = JSON.parse(event.data);
         console.log("Payment Update Received:", newData);

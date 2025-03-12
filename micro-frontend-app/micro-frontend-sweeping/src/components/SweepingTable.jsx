@@ -22,14 +22,30 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 const allColumns = [
-  { title: "Sweep Name", dataIndex: "sweep", key: "sweep" },
-  { title: "Master Account", dataIndex: "master", key: "master" },
+  { title: "Sweep Name", dataIndex: "sweep_name", key: "sweep_name" },
+  {
+    title: "Master Account",
+    dataIndex: "master_account",
+    key: "master_account",
+  },
   { title: "Currency", dataIndex: "currency", key: "currency" },
-  { title: "Sweep Direction", dataIndex: "direction", key: "direction" },
+  {
+    title: "Sweep Direction",
+    dataIndex: "sweep_direction",
+    key: "sweep_direction",
+  },
   { title: "Frequency", dataIndex: "frequency", key: "frequency" },
   { title: "Status", dataIndex: "status", key: "status" },
-  { title: "Next Execution", dataIndex: "execution", key: "execution" },
-  { title: "Threshold Limit", dataIndex: "threshold", key: "threshold" },
+  {
+    title: "Next Execution",
+    dataIndex: "next_execution",
+    key: "next_execution",
+  },
+  {
+    title: "Threshold Limit",
+    dataIndex: "threshold_limit",
+    key: "threshold_limit",
+  },
   { title: "Last Sweep Date", dataIndex: "date", key: "date" },
   { title: "Auto-Transfer Enabled", dataIndex: "transfer", key: "transfer" },
   { title: "Action", dataIndex: "action", key: "action" },

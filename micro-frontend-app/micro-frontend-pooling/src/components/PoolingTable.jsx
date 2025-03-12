@@ -22,14 +22,30 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 const allColumns = [
-  { title: "Pool Name", dataIndex: "name", key: "name" },
-  { title: "Master Account", dataIndex: "master", key: "master" },
+  { title: "Pool Name", dataIndex: "pool_name", key: "pool_name" },
+  {
+    title: "Master Account",
+    dataIndex: "master_account",
+    key: "master_account",
+  },
   { title: "Currency", dataIndex: "currency", key: "currency" },
-  { title: "Participating Accounts", dataIndex: "participating", key: "participating"},
+  {
+    title: "Participating Accounts",
+    dataIndex: "participating_accounts",
+    key: "participating_accounts",
+  },
   { title: "Status", dataIndex: "status", key: "status" },
-  { title: "Next Execution", dataIndex: "execute", key: "execute" },
+  {
+    title: "Next Execution",
+    dataIndex: "next_execution",
+    key: "next_execution",
+  },
   { title: "Balance", dataIndex: "balance", key: "balance" },
-  { title: "Liquidity Threshold", dataIndex: "liquidity", key: "liquidity" },
+  {
+    title: "Liquidity Threshold",
+    dataIndex: "liquidity_threshold",
+    key: "liquidity_threshold",
+  },
   { title: "Last Pool Update", dataIndex: "update", key: "update" },
   { title: "Interest Rate(%)", dataIndex: "interest", key: "interest" },
   { title: "Auto-Rebalancing", dataIndex: "rebalancing", key: "rebalancing" },

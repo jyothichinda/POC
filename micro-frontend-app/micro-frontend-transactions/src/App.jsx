@@ -6,7 +6,7 @@ const App = () => {
 
   useEffect(() => {
     const eventSource = new EventSource(
-      "http://10.10.0.53:8080/transaction/sse"
+      "http://10.10.0.53:9898/transaction/sse"
     );
 
     eventSource.onopen = () => {

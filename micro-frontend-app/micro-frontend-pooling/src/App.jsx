@@ -1,56 +1,21 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import PoolingTable from "./components/PoolingTable";
 
 const App = () => {
-  const [data, setData] = useState([
-    {
-      name: "ABC",
-      master: "ABC Bank",
-      currency: "USD",
-      participating: "ABC-1, ABC-2",
-      status: "Active",
-      execute: "02/27/2025",
-      balance: "$500,000",
-      liquidity: "$100,000",
-      update: "02/25/2025",
-      interest: "1.5%",
-      rebalancing: "Yes",
-      action: "View / Edit",
-    },
-    {
-      name: "DEF",
-      master: "DEF Bank",
-      currency: "INR",
-      participating: "",
-      status: "InActive",
-      execute: "",
-      balance: "",
-      liquidity: "",
-      update: "",
-      interest: "",
-      rebalancing: "",
-      action: "",
-    },
-  ]);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    const eventSource = new EventSource("backend url");
-
-    eventSource.onmessage = (event) => {
+    async function fetchPoolingData() {
       try {
-        const newData = JSON.parse(event.data);
-        setData((prev) => [...prev, newData]);
+        const res = await axios.get("http://10.10.0.53:9898/pooling_data");
+        setData(res.data || {});
       } catch (error) {
-        console.error("Error parsing SSE data:", error);
+        console.error("Error fetching projected data:", error);
       }
-    };
+    }
 
-    eventSource.onerror = () => {
-      console.error("SSE Connection Failed!");
-      eventSource.close();
-    };
-
-    return () => eventSource.close();
+    fetchPoolingData(); // Call async function
   }, []);
 
   return <PoolingTable data={data} />;

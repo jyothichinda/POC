@@ -1,54 +1,21 @@
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import SweepingTable from "./components/SweepingTable";
 
 const App = () => {
-  const [data, setData] = useState([
-    {
-      sweep: "ABC",
-      master: "ABC BANK",
-      currency: "USD",
-      direction: "One-Way",
-      frequency: "Daily",
-      status: "InActive",
-      execution: "02/27/2025",
-      threshold: "$50,000",
-      date: "02/25/2025",
-      transfer: "Yes",
-      action: "View / Edit",
-    },
-    {
-      sweep: "DEF",
-      master: "DEF BANK",
-      currency: "INR",
-      direction: "Bi-Directional",
-      frequency: "Weekly",
-      status: "Active",
-      execution: "02/27/2025",
-      threshold: "",
-      date: "",
-      transfer: "",
-      action: "",
-    },
-  ]);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    const eventSource = new EventSource("backend url")
-
-    eventSource.onmessage = (event) => {
+    async function fetchSweepingData() {
       try {
-        const newData = JSON.parse(event.data);
-        setData((prev) => [...prev, newData])
+        const res = await axios.get("http://10.10.0.53:9898/sweeping_data");
+        setData(res.data || {});
       } catch (error) {
-        console.error("Error parsing SSE data:", error);
+        console.error("Error fetching projected data:", error);
       }
-    };
+    }
 
-    eventSource.onerror = () => {
-      console.error("SSE Connection Failed!");
-      eventSource.close();
-    };
-
-    return () => eventSource.close();
+    fetchSweepingData(); // Call async function
   }, []);
 
   return <SweepingTable data={data} />;

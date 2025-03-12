@@ -138,7 +138,7 @@ const ActualDataTable = ({ data }) => {
   );
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px", width: "100%" }}>
       {/* Settings Button */}
       <div
         style={{
