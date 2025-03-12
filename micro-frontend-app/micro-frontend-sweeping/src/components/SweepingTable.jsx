@@ -27,35 +27,56 @@ const allColumns = [
     title: "Master Account",
     dataIndex: "master_account",
     key: "master_account",
+    render: (text) => text || "--",
   },
-  { title: "Currency", dataIndex: "currency", key: "currency" },
+  {
+    title: "Currency",
+    dataIndex: "currency",
+    key: "currency",
+    render: (text) => text || "--",
+  },
   {
     title: "Sweep Direction",
     dataIndex: "sweep_direction",
     key: "sweep_direction",
+    render: (text) => text || "--",
   },
-  { title: "Frequency", dataIndex: "frequency", key: "frequency" },
-  { title: "Status", dataIndex: "status", key: "status" },
+  {
+    title: "Frequency",
+    dataIndex: "frequency",
+    key: "frequency",
+    render: (text) => text || "--",
+  },
+  {
+    title: "Status",
+    dataIndex: "status",
+    key: "status",
+    render: (text) => text || "N/A",
+  },
   {
     title: "Next Execution",
     dataIndex: "next_execution",
     key: "next_execution",
+    render: (text) => text || "--",
   },
   {
     title: "Threshold Limit",
     dataIndex: "threshold_limit",
     key: "threshold_limit",
+    render: (text) => text || "--",
   },
   {
     title: "Last Sweep Date",
-    dataIndex: "last_sweep_date",
+    dataIndex: "last_sweep_date" || "N/A",
     key: "last_sweep_date",
-  }, // Updated key
+    render: (text) => text || "--",
+  },
   {
     title: "Auto-Transfer Enabled",
-    dataIndex: "auto_transfer_enabled",
+    dataIndex: "auto_transfer_enabled" || "--",
     key: "auto_transfer_enabled",
-  }, // Updated key
+    render: (text) => text || "--",
+  },
   { title: "Action", dataIndex: "action", key: "action" },
 ];
 
@@ -154,8 +175,6 @@ const SweepingTable = ({ data }) => {
   const filteredColumns = columnsOrder.filter((col) =>
     selectedColumns.includes(col.key)
   );
-
-  console.log(filteredColumns);
 
   return (
     <div style={{ padding: "20px" }}>

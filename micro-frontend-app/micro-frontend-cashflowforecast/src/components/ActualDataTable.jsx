@@ -23,15 +23,36 @@ import { CSS } from "@dnd-kit/utilities";
 
 const allColumns = [
   { title: "Msg ID", dataIndex: "msgId", key: "msgId" },
-  { title: "Instrument", dataIndex: "instrument", key: "instrument" },
+  {
+    title: "Instrument",
+    dataIndex: "instrument",
+    key: "instrument",
+    render: (text) => text || "--",
+  },
   {
     title: "Clearing Network",
     dataIndex: "clearingNetwork",
     key: "clearingNetwork",
+    render: (text) => text || "--",
   },
-  { title: "Cash Inflow", dataIndex: "inflow", key: "inflow" },
-  { title: "Cash Outflow", dataIndex: "outflow", key: "outflow" },
-  { title: "Status", dataIndex: "status", key: "status" },
+  {
+    title: "Cash Inflow",
+    dataIndex: "inflow",
+    key: "inflow",
+    render: (text) => text || "--",
+  },
+  {
+    title: "Cash Outflow",
+    dataIndex: "outflow",
+    key: "outflow",
+    render: (text) => text || "--",
+  },
+  {
+    title: "Status",
+    dataIndex: "status",
+    key: "status",
+    render: (text) => text || "--",
+  },
   {
     title: "Settlement Date",
     dataIndex: "settlementDate",
