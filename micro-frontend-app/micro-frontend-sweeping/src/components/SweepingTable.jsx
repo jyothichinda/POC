@@ -46,8 +46,16 @@ const allColumns = [
     dataIndex: "threshold_limit",
     key: "threshold_limit",
   },
-  { title: "Last Sweep Date", dataIndex: "date", key: "date" },
-  { title: "Auto-Transfer Enabled", dataIndex: "transfer", key: "transfer" },
+  {
+    title: "Last Sweep Date",
+    dataIndex: "last_sweep_date",
+    key: "last_sweep_date",
+  }, // Updated key
+  {
+    title: "Auto-Transfer Enabled",
+    dataIndex: "auto_transfer_enabled",
+    key: "auto_transfer_enabled",
+  }, // Updated key
   { title: "Action", dataIndex: "action", key: "action" },
 ];
 
