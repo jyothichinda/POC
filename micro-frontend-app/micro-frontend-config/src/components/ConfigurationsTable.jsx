@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Table, Modal, Button, Card } from "antd";
+import { Table, Modal, Button, Card, Form, Input, message } from "antd";
+import axios from "axios";
 import {
   SettingOutlined,
   MinusSquareOutlined,
   PlusSquareOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 import {
   DndContext,
@@ -76,7 +78,7 @@ const SortableItem = ({ column, isChecked, onToggle }) => {
   );
 };
 
-const ConfigurationsTable = ({ data }) => {
+const ConfigurationsTable = ({ data, fetchData }) => {
   // Load preferences from local storage
   const savedColumns =
     JSON.parse(localStorage.getItem("selectedColumns")) ||
@@ -87,6 +89,7 @@ const ConfigurationsTable = ({ data }) => {
   const [selectedColumns, setSelectedColumns] = useState(savedColumns);
   const [columnsOrder, setColumnsOrder] = useState(savedOrder);
   const [modalVisible, setModalVisible] = useState(false);
+  const [createModalVisible, setCreateModalVisible] = useState(false);
 
   // Persist preferences
   useEffect(() => {
@@ -133,6 +136,35 @@ const ConfigurationsTable = ({ data }) => {
     selectedColumns.includes(col.key)
   );
 
+  const [form] = Form.useForm();
+
+  // Function to handle form submission
+  const handleSubmit = async (values) => {
+    try {
+      const response = await axios.post(
+        "http://10.10.0.53:9898/save/masterThrottle_configuration",
+        values
+      );
+      message.success("Configuration saved successfully!");
+      setCreateModalVisible(false);
+      form.resetFields();
+      // Refresh data after successful creation to refresh table
+      fetchData();
+    } catch (error) {
+      message.error("Failed to save configuration!");
+    }
+  };
+
+  // Function to reset form to default values
+  const resetConfigToDefault = () => {
+    form.setFieldsValue({
+      controlName: "",
+      status: "System",
+      lastUpdatedBy: "",
+      action: "Audit",
+    });
+  };
+
   return (
     <div style={{ padding: "20px" }}>
       {/* Settings Button */}
@@ -144,6 +176,14 @@ const ConfigurationsTable = ({ data }) => {
         }}
       >
         <Button
+          icon={<EditOutlined />}
+          type="primary"
+          onClick={() => setCreateModalVisible(true)}
+        >
+          Create
+        </Button>
+        <Button
+          style={{ marginLeft: "10px", padding: "10px" }}
           icon={<SettingOutlined />}
           type="primary"
           onClick={() => setModalVisible(true)}
@@ -189,6 +229,53 @@ const ConfigurationsTable = ({ data }) => {
             ))}
           </SortableContext>
         </DndContext>
+      </Modal>
+
+      <Modal
+        title="Create Configuration"
+        open={createModalVisible}
+        onCancel={() => setCreateModalVisible(false)}
+        footer={null} // Footer removed since it's inside the form now
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          initialValues={{
+            status: "System",
+            lastUpdatedTime: new Date().toISOString(),
+            action: "Audit",
+          }}
+        >
+          <Form.Item
+            label="Control Name"
+            name="controlName"
+            rules={[{ required: true, message: "Please enter control name" }]}
+          >
+            <Input placeholder="Enter control name" />
+          </Form.Item>
+
+          <Form.Item label="Status" name="status">
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item
+            label="User"
+            name="lastUpdatedBy"
+            rules={[{ required: true, message: "Please enter user name" }]}
+          >
+            <Input placeholder="Enter user name" />
+          </Form.Item>
+
+          <Form.Item>
+            <Button onClick={resetConfigToDefault} style={{ marginRight: 10 }}>
+              Reset to Default
+            </Button>
+            <Button type="primary" htmlType="submit">
+              Done
+            </Button>
+          </Form.Item>
+        </Form>
       </Modal>
 
       {/* Transactions Table */}

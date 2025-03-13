@@ -5,22 +5,22 @@ import ConfigurationsTable from "./components/ConfigurationsTable";
 const App = () => {
   const [data, setData] = useState([]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await axios.get(
-          "http://10.10.0.53:9898/api/masterThrottle_configuration"
-        );
-        setData(response.data || []);
-      } catch (error) {
-        console.log("Error while fetching http response:", error);
-      }
+  async function fetchData() {
+    try {
+      const response = await axios.get(
+        "http://10.10.0.53:9898/get/masterThrottle_configuration"
+      );
+      setData(response.data || []);
+    } catch (error) {
+      console.log("Error while fetching http response:", error);
     }
+  }
 
+  useEffect(() => {
     fetchData();
   }, []);
 
-  return <ConfigurationsTable data={data} />;
+  return <ConfigurationsTable data={data} fetchData={fetchData} />;
 };
 
 export default App;
