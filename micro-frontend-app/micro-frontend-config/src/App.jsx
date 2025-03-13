@@ -9,7 +9,7 @@ const App = () => {
     async function fetchData() {
       try {
         const response = await axios.get(
-          "http://10.10.0.53:9898/api/materThrottle_configuration"
+          "http://10.10.0.53:9898/api/masterThrottle_configuration"
         );
         setData(response.data || []);
       } catch (error) {
