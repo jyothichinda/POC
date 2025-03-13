@@ -22,7 +22,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 const allColumns = [
-  { title: "Control Name", dataIndex: "name", key: "name" },
+  { title: "Control Name", dataIndex: "controlName", key: "controlName" },
   { title: "Status", dataIndex: "status", key: "status" },
   {
     title: "Last Updated By",
@@ -31,8 +31,8 @@ const allColumns = [
   },
   {
     title: "Last Updated Time",
-    dataIndex: "lastUpdatedAt",
-    key: "lastUpdatedAt",
+    dataIndex: "lastUpdatedTime",
+    key: "lastUpdatedTime",
   },
   { title: "Action", dataIndex: "action", key: "action" },
 ];

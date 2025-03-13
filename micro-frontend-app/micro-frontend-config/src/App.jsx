@@ -1,39 +1,23 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import ConfigurationsTable from "./components/ConfigurationsTable";
 
 const App = () => {
-  const [data, setData] = useState([
-    {
-      name: "Master System Decisions",
-      status: "System",
-      lastUpdatedBy: "Admin",
-      lastUpdatedAt: "03/03/2025 11:35:27",
-      action: "",
-    },
-    {
-      name: "Master Manual Throttle",
-      status: "System",
-      lastUpdatedBy: "Admin",
-      lastUpdatedAt: "03/03/2025 21:35:27",
-      action: "",
-    },
-  ]);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    const eventSource = new EventSource("backend url");
-    eventSource.onmessage = (event) => {
+    async function fetchData() {
       try {
-        const newData = JSON.parse(event.data);
-        setData((prev) => [...prev, newData]);
+        const response = await axios.get(
+          "http://10.10.0.53:9898/api/materThrottle_configuration"
+        );
+        setData(response.data || []);
       } catch (error) {
-        console.error("Failed to parse SSE data:", error);
+        console.log("Error while fetching http response:", error);
       }
-    };
-    eventSource.onerror = () => {
-      console.error("SSE connection failed!");
-      eventSource.close();
-    };
-    return () => eventSource.close();
+    }
+
+    fetchData();
   }, []);
 
   return <ConfigurationsTable data={data} />;
