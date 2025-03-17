@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Table, Modal, Form, Input, Button, Card, Select } from "antd";
+import { Table, Modal, Form, Input, Button, Card, Select, message } from "antd";
 
 import {
   SettingOutlined,
   MinusSquareOutlined,
   PlusSquareOutlined,
+  EditOutlined
 } from "@ant-design/icons";
 import {
   DndContext,
@@ -226,6 +227,7 @@ const SweepingTable = ({ data, fetchSweepingData }) => {
       >
         
         <Button
+          icon={<EditOutlined />}
           type="primary"
           onClick={() => setModalVisible(true)}
         >
