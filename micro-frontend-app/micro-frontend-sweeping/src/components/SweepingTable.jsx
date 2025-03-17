@@ -78,9 +78,9 @@ const allColumns = [
     render: (text) => text || "--",
   },
   {
-    title: "Auto-Transfer Enabled",
-    dataIndex: "auto_transfer_enabled" || "--",
-    key: "auto_transfer_enabled",
+    title: "Enable Auto Transfer",
+    dataIndex: "enable_auto_transfer" || "--",
+    key: "enable_auto_transfer",
     render: (text) => text || "--",
   },
   { title: "Action", dataIndex: "action", key: "action" },
@@ -211,7 +211,7 @@ const SweepingTable = ({ data, fetchSweepingData }) => {
       frequency: "",
       status: "",
       next_execution: "",
-      auto_transfer_enabled: ""
+      enable_auto_transfer: ""
     });
   };
 
@@ -286,7 +286,7 @@ const SweepingTable = ({ data, fetchSweepingData }) => {
               />
             </Form.Item>
 
-            <Form.Item label="Auto Transfer Enabled" name="auto_transfer_enabled" rules={[{ required: true, message: "Please select for Auto Transfer Enable" }]}>
+            <Form.Item label="Enable Auto Transfer" name="enable_auto_transfer" rules={[{ required: true, message: "Please select for Enable Auto Transfer" }]}>
               <Select placeholder="Select an option">
                 <Select.Option value="yes">Yes</Select.Option>
                 <Select.Option value="no">No</Select.Option>
