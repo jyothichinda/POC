@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Table, Modal, Button, Card } from "antd";
+import { Table, Modal, Form, Input, Button, Card, Select } from "antd";
+
 import {
   SettingOutlined,
   MinusSquareOutlined,
@@ -20,6 +21,8 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+
+
 
 const allColumns = [
   { title: "Sweep Name", dataIndex: "sweep_name", key: "sweep_name" },
@@ -119,7 +122,7 @@ const SortableItem = ({ column, isChecked, onToggle }) => {
   );
 };
 
-const SweepingTable = ({ data }) => {
+const SweepingTable = ({ data, fetchSweepingData }) => {
   // Load preferences from local storage
   const savedColumns =
     JSON.parse(localStorage.getItem("selectedColumns")) ||
@@ -130,6 +133,8 @@ const SweepingTable = ({ data }) => {
   const [selectedColumns, setSelectedColumns] = useState(savedColumns);
   const [columnsOrder, setColumnsOrder] = useState(savedOrder);
   const [modalVisible, setModalVisible] = useState(false);
+  const [customizeModalVisible, setCustomizeModalVisible] = useState(false);
+
 
   // Persist preferences
   useEffect(() => {
@@ -148,6 +153,8 @@ const SweepingTable = ({ data }) => {
       return updatedColumns;
     });
   };
+
+
 
   // Reset to default
   const resetToDefault = () => {
@@ -175,6 +182,37 @@ const SweepingTable = ({ data }) => {
   const filteredColumns = columnsOrder.filter((col) =>
     selectedColumns.includes(col.key)
   );
+  
+  const [form] = Form.useForm();
+
+  const handleSubmit = async (values) => {
+    try {
+      const response = await axios.post(
+        "",
+        values
+      );
+      message.success("Sweeping saved successfully!");
+      setModalVisible(false);
+      form.resetFields();
+      // Refresh data after successful creation to refresh table
+      fetchData();
+    } catch (error) {
+      message.error("Failed to save sweeeping!");
+    }
+  };
+
+  const resetSweepToDefault = () => {
+    form.setFieldsValue({
+      sweepName: "",
+      masterName:"",
+      currency:"",
+      sweepDirection:"",
+      frequency:"",
+      status: "",
+      nextExecution:"",
+      autoTransferEnabled:""
+    });
+  };
 
   return (
     <div style={{ padding: "20px" }}>
@@ -186,10 +224,80 @@ const SweepingTable = ({ data }) => {
           marginBottom: "10px",
         }}
       >
+        
         <Button
-          icon={<SettingOutlined />}
           type="primary"
           onClick={() => setModalVisible(true)}
+        >
+          Create
+        </Button>
+
+        <Modal
+        title="Sweeping Form"
+        open={modalVisible} // 'open' replaces 'visible' in Antd v4+
+        onCancel={() => setModalVisible(false)}
+        footer={null} // Remove default footer buttons
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+        >
+          <Form.Item label="Sweep Name" name="sweepName" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Master Account" name="masterName" rules={[{ required: true}]}>
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Currency" name="currency" rules={[{ required: true}]}>
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Sweep Direction" name="sweepDirection" rules={[{ required: true}]}>
+            <Select placeholder = "Select Direction">
+              <Select.Option value="onewaydirection">One-Way Direction</Select.Option>
+              <Select.Option value="biwaydirection">Bi-Direction</Select.Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item label="Frequency" name="frequency" rules={[{ required: true}]}>
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Status" name="status" rules={[{ required: true}]}>
+            <Select placeholder = "Select Status">
+              <Select.Option value="active">Active</Select.Option>
+              <Select.Option value="inactive">Inactive</Select.Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item label="Next Execution" name="nextExectution" rules={[{ required: true, type: "date"}]}>
+            <Input />
+          </Form.Item>
+          
+          <Form.Item label="Auto-Transfer Enabled" name="autoTransferEnabled" rules={[{ required: true}]}>
+            <Select placeholder="Select option">
+              <Select.Option value="yes">Yes</Select.Option>
+              <Select.Option value="no">No</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <Button onClick={resetSweepToDefault} style={{ marginRight: 10 }}>
+              Reset to Default
+            </Button>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+        <Button
+          style={{ marginLeft: "10px", padding: "10px" }}
+          icon={<SettingOutlined />}
+          type="primary"
+          onClick={() => setCustomizeModalVisible(true)}
         >
           Customize
         </Button>
@@ -198,8 +306,8 @@ const SweepingTable = ({ data }) => {
       {/* Customization Modal */}
       <Modal
         title="Customize Columns"
-        open={modalVisible}
-        onCancel={() => setModalVisible(false)}
+        open={customizeModalVisible}
+        onCancel={() => setCustomizeModalVisible(false)}
         footer={[
           <Button key="reset" onClick={resetToDefault}>
             Reset to Default
@@ -207,7 +315,7 @@ const SweepingTable = ({ data }) => {
           <Button
             key="close"
             type="primary"
-            onClick={() => setModalVisible(false)}
+            onClick={() => setCustomizeModalVisible(false)}
           >
             Done
           </Button>,
