@@ -1,9 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { Table, Modal, Button, Card } from "antd";
+import {
+  Table,
+  Modal,
+  Button,
+  Card,
+  Form,
+  message,
+  Input,
+  InputNumber,
+  DatePicker,
+  Select,
+} from "antd";
 import {
   SettingOutlined,
   MinusSquareOutlined,
   PlusSquareOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 import {
   DndContext,
@@ -20,6 +32,7 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import dayjs from "dayjs";
 
 const allColumns = [
   { title: "Pool Name", dataIndex: "pool_name", key: "pool_name" },
@@ -136,6 +149,7 @@ const PoolingTable = ({ data }) => {
   const [selectedColumns, setSelectedColumns] = useState(savedColumns);
   const [columnsOrder, setColumnsOrder] = useState(savedOrder);
   const [modalVisible, setModalVisible] = useState(false);
+  const [createModalVisible, setCreateModalVisible] = useState(false);
 
   // Persist preferences
   useEffect(() => {
@@ -182,6 +196,41 @@ const PoolingTable = ({ data }) => {
     selectedColumns.includes(col.key)
   );
 
+  const [form] = Form.useForm();
+
+  // Function to handle form submission
+  const handleSubmit = async (values) => {
+    try {
+      const response = await axios.post(
+        "http://10.10.0.53:9898/save/pooling_data",
+        values
+      );
+      console.log(response);
+      message.success("Pool saved successfully!");
+      setCreateModalVisible(false);
+      form.resetFields();
+      // Refresh data after successful creation to refresh table
+      fetchData();
+    } catch (error) {
+      message.error("Failed to save pool!");
+    }
+  };
+
+  // Function to reset form to default values
+  const resetConfigToDefault = () => {
+    form.setFieldsValue({
+      pool_name: "",
+      master_account: "",
+      currency: "",
+      participating_accounts: [],
+      status: "",
+      balance: "",
+      liquidity_threshold: "",
+      interest: "",
+      rebalancing: "",
+    });
+  };
+
   return (
     <div style={{ padding: "20px" }}>
       {/* Settings Button */}
@@ -193,8 +242,16 @@ const PoolingTable = ({ data }) => {
         }}
       >
         <Button
+          icon={<EditOutlined />}
+          type="primary"
+          onClick={() => setCreateModalVisible(true)}
+        >
+          Create
+        </Button>
+        <Button
           icon={<SettingOutlined />}
           type="primary"
+          style={{ marginLeft: "10px" }}
           onClick={() => setModalVisible(true)}
         >
           Customize
@@ -238,6 +295,115 @@ const PoolingTable = ({ data }) => {
             ))}
           </SortableContext>
         </DndContext>
+      </Modal>
+      <Modal
+        title="Create Configuration"
+        open={createModalVisible}
+        onCancel={() => setCreateModalVisible(false)}
+        footer={null} // Footer removed since it's inside the form now
+      >
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <Form.Item
+            label="Pool Name"
+            name="pool_name"
+            rules={[{ required: true, message: "Please enter pool name" }]}
+          >
+            <Input placeholder="Enter pool name" />
+          </Form.Item>
+          <Form.Item
+            label="Master Account"
+            name="master_account"
+            rules={[{ required: true, message: "Please enter Master Account" }]}
+          >
+            <Input placeholder="Enter master account" />
+          </Form.Item>
+
+          <Form.Item
+            label="Currency"
+            name="currency"
+            rules={[{ required: true, message: "Please enter Currency" }]}
+          >
+            <Input placeholder="Enter currency" />
+          </Form.Item>
+          <Form.Item
+            label="Participating Accounts"
+            name="participating_accounts"
+            rules={[
+              {
+                required: true,
+                message: "Please enter Participating Accounts",
+              },
+            ]}
+          >
+            <Input placeholder="Enter Participating Accounts" />
+          </Form.Item>
+
+          <Form.Item label="Status" name="status">
+            <Input placeholder="Enter status" />
+          </Form.Item>
+
+          <Form.Item
+            label="Next Execution"
+            name="next_execution"
+            rules={[
+              { required: true, message: "Please enter Next Execution Date" },
+            ]}
+          >
+            <DatePicker
+              format="YYYY-MM-DD"
+              style={{ width: "100%" }}
+              disabledDate={(current) =>
+                current && current < dayjs().startOf("day")
+              }
+            />
+          </Form.Item>
+          <Form.Item
+            label="Threshold"
+            name="liquidity_threshold
+"
+            rules={[{ required: true, message: "Please enter Threshold" }]}
+          >
+            <InputNumber style={{ width: "100%" }} min={0} />
+          </Form.Item>
+          <Form.Item
+            label="Interest"
+            name="interest
+"
+            rules={[{ required: true, message: "Please enter Interest Rate" }]}
+          >
+            <InputNumber style={{ width: "100%" }} min={0} />
+          </Form.Item>
+          <Form.Item
+            label="Auto Rebalancing"
+            name="rebalancing
+"
+            rules={[
+              { required: true, message: "Please Select for Auto Rebalance" },
+            ]}
+          >
+            <Select
+              showSearch
+              placeholder="Select an option"
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={[
+                { value: "yes", label: "Yes" },
+                { value: "no", label: "No" },
+              ]}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button onClick={resetConfigToDefault} style={{ marginRight: 10 }}>
+              Reset to Default
+            </Button>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
       </Modal>
 
       {/* Pooling Table */}
