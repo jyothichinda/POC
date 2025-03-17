@@ -183,7 +183,7 @@ const SweepingTable = ({ data, fetchSweepingData }) => {
   const filteredColumns = columnsOrder.filter((col) =>
     selectedColumns.includes(col.key)
   );
-  
+
   const [form] = Form.useForm();
 
   const handleSubmit = async (values) => {
@@ -205,13 +205,13 @@ const SweepingTable = ({ data, fetchSweepingData }) => {
   const resetSweepToDefault = () => {
     form.setFieldsValue({
       sweep_name: "",
-      master_account:"",
-      currency:"",
-      sweep_direction:"",
-      frequency:"",
+      master_account: "",
+      currency: "",
+      sweep_direction: "",
+      frequency: "",
       status: "",
-      next_execution:"",
-      auto_transfer_enabled:""
+      next_execution: "",
+      auto_transfer_enabled: ""
     });
   };
 
@@ -225,7 +225,7 @@ const SweepingTable = ({ data, fetchSweepingData }) => {
           marginBottom: "10px",
         }}
       >
-        
+
         <Button
           icon={<EditOutlined />}
           type="primary"
@@ -235,73 +235,73 @@ const SweepingTable = ({ data, fetchSweepingData }) => {
         </Button>
 
         <Modal
-        title="Sweeping Form"
-        open={modalVisible} // 'open' replaces 'visible' in Antd v4+
-        onCancel={() => setModalVisible(false)}
-        footer={null} // Remove default footer buttons
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
+          title="Sweeping Form"
+          open={modalVisible} // 'open' replaces 'visible' in Antd v4+
+          onCancel={() => setModalVisible(false)}
+          footer={null} // Remove default footer buttons
         >
-          <Form.Item label="Sweep Name" name="sweep_name" rules={[{ required: true, message: "Please enter sweep name" }]}>
-            <Input placeholder="Enter sweep name" />
-          </Form.Item>
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleSubmit}
+          >
+            <Form.Item label="Sweep Name" name="sweep_name" rules={[{ required: true, message: "Please enter sweep name" }]}>
+              <Input placeholder="Enter sweep name" />
+            </Form.Item>
 
-          <Form.Item label="Master Account" name="master_account" rules={[{ required: true, message: "Please enter Master Account" }]}>
-            <Input placeholder="Enter master account" />
-          </Form.Item>
+            <Form.Item label="Master Account" name="master_account" rules={[{ required: true, message: "Please enter Master Account" }]}>
+              <Input placeholder="Enter master account" />
+            </Form.Item>
 
-          <Form.Item label="Currency" name="currency" rules={[{ required: true, message: "Please enter Currency" }]}>
-            <Input placeholder="Enter currency" />
-          </Form.Item>
+            <Form.Item label="Currency" name="currency" rules={[{ required: true, message: "Please enter Currency" }]}>
+              <Input placeholder="Enter currency" />
+            </Form.Item>
 
-          <Form.Item label="Sweep Direction" name="sweep_direction" rules={[{ required: true, message: "Please enter Sweep Direction" }]}>
-            <Select placeholder = "Select Direction">
-              <Select.Option value="onewaydirection">One-Way Direction</Select.Option>
-              <Select.Option value="biwaydirection">Bi-Direction</Select.Option>
-            </Select>
-          </Form.Item>
+            <Form.Item label="Sweep Direction" name="sweep_direction" rules={[{ required: true, message: "Please enter Sweep Direction" }]}>
+              <Select placeholder="Select Direction">
+                <Select.Option value="onewaydirection">One-Way Direction</Select.Option>
+                <Select.Option value="biwaydirection">Bi-Direction</Select.Option>
+              </Select>
+            </Form.Item>
 
-          <Form.Item label="Frequency" name="frequency" rules={[{ required: true, message: "Please enter Frequency" }]}>
-            <Input placeholder="Enter frequency"/>
-          </Form.Item>
+            <Form.Item label="Frequency" name="frequency" rules={[{ required: true, message: "Please enter Frequency" }]}>
+              <Input placeholder="Enter frequency" />
+            </Form.Item>
 
-          <Form.Item label="Status" name="status" rules={[{ required: true, message: "Please enter Status" }]}>
-            <Select placeholder = "Select Status">
-              <Select.Option value="active">Active</Select.Option>
-              <Select.Option value="inactive">Inactive</Select.Option>
-            </Select>
-          </Form.Item>
+            <Form.Item label="Status" name="status" rules={[{ required: true, message: "Please enter Status" }]}>
+              <Select placeholder="Select Status">
+                <Select.Option value="active">Active</Select.Option>
+                <Select.Option value="inactive">Inactive</Select.Option>
+              </Select>
+            </Form.Item>
 
-          <Form.Item label="Next Execution" name="next_exectution" rules={[{ required: true, message: "Please enter Next Execution Date" },
-          ]}>
-            <DatePicker
-               format="YYYY-MM-DD"
-                          style={{ width: "100%" }}
-                          disabledDate={(current) =>
-                            current && current < dayjs().startOf("day")
-                          }
-                        />
-          </Form.Item>
-          
-          <Form.Item label="auto_transfer_enabled" name="autoTransferEnabled" rules={[{ required: true, message: "Please select for Auto Transfer Enable" }]}>
-            <Select placeholder="Select an option">
-              <Select.Option value="yes">Yes</Select.Option>
-              <Select.Option value="no">No</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item>
-            <Button onClick={resetSweepToDefault} style={{ marginRight: 10 }}>
-              Reset to Default
-            </Button>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+            <Form.Item label="Next Execution" name="next_exectution" rules={[{ required: true, message: "Please enter Next Execution Date" },
+            ]}>
+              <DatePicker
+                format="YYYY-MM-DD"
+                style={{ width: "100%" }}
+                disabledDate={(current) =>
+                  current && current < dayjs().startOf("day")
+                }
+              />
+            </Form.Item>
+
+            <Form.Item label="Auto Transfer Enabled" name="auto_transfer_enabled" rules={[{ required: true, message: "Please select for Auto Transfer Enable" }]}>
+              <Select placeholder="Select an option">
+                <Select.Option value="yes">Yes</Select.Option>
+                <Select.Option value="no">No</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item>
+              <Button onClick={resetSweepToDefault} style={{ marginRight: 10 }}>
+                Reset to Default
+              </Button>
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
         <Button
           style={{ marginLeft: "10px", padding: "10px" }}
           icon={<SettingOutlined />}
