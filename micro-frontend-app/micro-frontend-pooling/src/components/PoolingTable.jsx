@@ -338,8 +338,29 @@ const PoolingTable = ({ data }) => {
             <Input placeholder="Enter Participating Accounts" />
           </Form.Item>
 
-          <Form.Item label="Status" name="status">
-            <Input placeholder="Enter status" />
+          <Form.Item
+            label="Status"
+            name="status"
+            rules={[
+              {
+                required: true,
+                message: "Please select a Status",
+              },
+            ]}
+          >
+            <Select
+              showSearch
+              placeholder="Select an option"
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={[
+                { value: "Active", label: "Active" },
+                { value: "InActive", label: "InActive" },
+              ]}
+            />
           </Form.Item>
 
           <Form.Item
@@ -363,7 +384,11 @@ const PoolingTable = ({ data }) => {
 "
             rules={[{ required: true, message: "Please enter Threshold" }]}
           >
-            <InputNumber style={{ width: "100%" }} min={0} />
+            <InputNumber
+              style={{ width: "100%" }}
+              min={0}
+              placeholder="Enter Liquidity Threshold"
+            />
           </Form.Item>
           <Form.Item
             label="Interest"
@@ -371,7 +396,11 @@ const PoolingTable = ({ data }) => {
 "
             rules={[{ required: true, message: "Please enter Interest Rate" }]}
           >
-            <InputNumber style={{ width: "100%" }} min={0} />
+            <InputNumber
+              style={{ width: "100%" }}
+              min={0}
+              placeholder="Enter Interest %"
+            />
           </Form.Item>
           <Form.Item
             label="Auto Rebalancing"
