@@ -223,7 +223,7 @@ const SweepingTable = ({ data, fetchSweepingData }) => {
       frequency: "",
       status: "",
       next_execution: "",
-      enable_auto_transfer: ""
+      enable_auto_transfer: "",
     });
   };
 
@@ -251,12 +251,12 @@ const SweepingTable = ({ data, fetchSweepingData }) => {
           onCancel={() => setModalVisible(false)}
           footer={null} // Remove default footer buttons
         >
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleSubmit}
-          >
-            <Form.Item label="Sweep Name" name="sweep_name" rules={[{ required: true, message: "Please enter sweep name" }]}>
+          <Form form={form} layout="vertical" onFinish={handleSubmit}>
+            <Form.Item
+              label="Sweep Name"
+              name="sweep_name"
+              rules={[{ required: true, message: "Please enter sweep name" }]}
+            >
               <Input placeholder="Enter sweep name" />
             </Form.Item>
 
@@ -287,7 +287,7 @@ const SweepingTable = ({ data, fetchSweepingData }) => {
             >
               <Select placeholder="Select Direction">
                 <Select.Option value="onewaydirection">
-                  One-Way Direction
+                  Uni Direction
                 </Select.Option>
                 <Select.Option value="biwaydirection">
                   Bi-Direction
@@ -331,8 +331,8 @@ const SweepingTable = ({ data, fetchSweepingData }) => {
             </Form.Item>
 
             <Form.Item
-              label="auto_transfer_enabled"
-              name="autoTransferEnabled"
+              label="Enable Auto Transfer"
+              name="enable_auto_transfer"
               rules={[
                 {
                   required: true,
