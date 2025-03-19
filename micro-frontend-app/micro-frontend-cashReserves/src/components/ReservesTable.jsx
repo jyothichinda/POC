@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Table, Modal, Button, Card } from "antd";
+import { Table, Modal, Button, Card, Form, Input, InputNumber, DatePicker, Select, message } from "antd";
 import {
   SettingOutlined,
   MinusSquareOutlined,
   PlusSquareOutlined,
+  EditOutlined
 } from "@ant-design/icons";
 import {
   DndContext,
@@ -20,17 +21,18 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import dayjs from "dayjs";
 
 const allColumns = [
-  { title: "Reserve Name", dataIndex: "name", key: "name" },
-  { title: "Master Account", dataIndex: "master", key: "master" },
-  { title: "Currency", dataIndex: "currency", key: "currency" },
-  { title: "Reserved Amount", dataIndex: "amount", key: "amount" },
-  { title: "Minimum Required", dataIndex: "minRequired", key: "minRequired" },
-  { title: "Status", dataIndex: "status", key: "status" },
-  { title: "Last Updated", dataIndex: "lastUpdated", key: "lastUpdated" },
-  { title: "Auto Refill", dataIndex: "autoRefill", key: "autoRefill" },
-  { title: "Action", dataIndex: "action", key: "action" },
+  { title: "Reserve Name", dataIndex: "reserve_name", key: "reserve_name", render: (text) => text || "--" },
+  { title: "Master Account", dataIndex: "master_account", key: "master_account", render: (text) => text || "--" },
+  { title: "Currency", dataIndex: "currency", key: "currency", render: (text) => text || "--" },
+  { title: "Reserved Amount", dataIndex: "reserved_amount", key: "reserved_amount", render: (text) => text || "--" },
+  { title: "Minimum Required", dataIndex: "minimum_required", key: "minimum_required", render: (text) => text || "--" },
+  { title: "Status", dataIndex: "status", key: "status", render: (text) => text || "--" },
+  { title: "Last Updated", dataIndex: "last_updated", key: "last_updated", render: (text) => text || "--" },
+  { title: "Auto Refill", dataIndex: "auto_refill", key: "auto_refill", render: (text) => text || "--" },
+  { title: "Action", dataIndex: "action", key: "action", render: (text) => text || "--" },
 ];
 
 // Sortable item component
@@ -83,6 +85,7 @@ const ReservesTable = ({ data }) => {
   const [selectedColumns, setSelectedColumns] = useState(savedColumns);
   const [columnsOrder, setColumnsOrder] = useState(savedOrder);
   const [modalVisible, setModalVisible] = useState(false);
+  const [createModalVisible, setCreateModalVisible] = useState(false);
 
   // Persist preferences
   useEffect(() => {
@@ -129,6 +132,39 @@ const ReservesTable = ({ data }) => {
     selectedColumns.includes(col.key)
   );
 
+  const [form] = Form.useForm();
+
+  const handleSubmit = async (values) => {
+    try {
+      const response = await axios.post("",
+        values
+      );
+      console.log(response);
+      message.success("Cash Reserves saved successfully!");
+      setCreateModalVisible(false);
+      form.resetFields();
+      // Refresh data after successful creation
+      fetchData();
+    } catch (error) {
+      message.error("Failed to save cash reserve!");
+    }
+  };
+
+  // Function to reset from default values
+  const resetReserveToDefault = () => {
+    form.setFieldValue({
+      reserve_name: "",
+      master_accounr: "",
+      currency: "",
+      reserved_amount: "",
+      minimun_required: "",
+      status: "",
+      last_updated: "",
+      auto_refill: "",
+      action: ""
+    });
+  };
+
   return (
     <div style={{ padding: "20px" }}>
       {/* Settings Button */}
@@ -140,8 +176,17 @@ const ReservesTable = ({ data }) => {
         }}
       >
         <Button
+          icon={<EditOutlined />}
+          type="primary"
+          onClick={() => setCreateModalVisible(true)}
+        >
+          Create
+        </Button>
+
+        <Button
           icon={<SettingOutlined />}
           type="primary"
+          style={{ marginLeft: "10px" }}
           onClick={() => setModalVisible(true)}
         >
           Customize
@@ -185,6 +230,110 @@ const ReservesTable = ({ data }) => {
             ))}
           </SortableContext>
         </DndContext>
+      </Modal>
+
+      <Modal
+        title="Create Cash Reserves"
+        open={createModalVisible}
+        onCancel={() => setCreateModalVisible(false)}
+        footer={null}
+      >
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <Form.Item
+            label="Reserve Name"
+            name="reserve_name"
+            rules={[{ required: true, message: "please enter reserve name" }]}
+          >
+            <Input placeholder="Enter reserve name" />
+          </Form.Item>
+
+          <Form.Item
+           label="Master Account"
+           name="master_account"
+           rules={[{required: true, message: "please enter Master Account"}]}
+           >
+            <Input placeholder = "Enter master account" />
+           </Form.Item>
+
+           <Form.Item
+           label="Currency"
+           name="currency"
+           rules={[{required: true, message: "please enter Currency "}]}
+           >
+            <Input placeholder = "Enter currency " />
+           </Form.Item>
+
+           <Form.Item
+           label="Reserved Amount"
+           name="reserved_amount"
+           rules={[{required: true, message: "please enter Reserved Amount "}]}
+           >
+            <Input placeholder = "Enter reserved amount " />
+           </Form.Item>
+           
+           <Form.Item
+           label="Minimum Required"
+           name="minimum_required"
+           rules={[{required: true, message: "please enter Minimum Required"}]}
+           >
+            <Input placeholder = "Enter minimum required" />
+           </Form.Item>
+
+           <Form.Item
+           label="Status"
+           name="status"
+           rules={[{required: true, message: "please select a Status "}]}
+           >
+            <Select
+              showSearch
+              placeholder="Select an option"
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={[
+                { value: "Active", label: "Active" },
+                { value: "InActive", label: "InActive" },
+              ]}
+            />  
+           </Form.Item>
+
+           <Form.Item
+           label="Last Updated"
+           name="last_updated"
+           rules={[{required: true, message: "please enter Last Updated "}]}
+           >
+            <Input placeholder = "Enter last updated" />
+           </Form.Item>
+
+           <Form.Item
+           label="Auto Refill"
+           name="auto_refill"
+           rules={[{required: true, message: "please enter Auto Refill"}]}
+           >
+            <Input placeholder = "Enter auto refill" />
+           </Form.Item>
+
+           <Form.Item
+           label="Action"
+           name="action"
+           rules={[{required: true, message: "please enter Action "}]}
+           >
+            <Input placeholder = "Enter action" />
+           </Form.Item>
+
+           <Form.Item>
+            <Button onClick={resetReserveToDefault} style={{ marginRight: 10 }}>
+              Reset to Default
+            </Button>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+
+        </Form>
+
       </Modal>
 
       {/* Transactions Table */}

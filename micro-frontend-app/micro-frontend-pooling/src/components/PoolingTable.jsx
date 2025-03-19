@@ -297,7 +297,7 @@ const PoolingTable = ({ data }) => {
         </DndContext>
       </Modal>
       <Modal
-        title="Create Configuration"
+        title="Create Pool"
         open={createModalVisible}
         onCancel={() => setCreateModalVisible(false)}
         footer={null} // Footer removed since it's inside the form now
