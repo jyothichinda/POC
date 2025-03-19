@@ -152,7 +152,7 @@ const ReservesTable = ({ data }) => {
 
   // Function to reset from default values
   const resetReserveToDefault = () => {
-    form.setFieldValue({
+    form.setFieldsValue({
       reserve_name: "",
       master_accounr: "",
       currency: "",
@@ -161,7 +161,7 @@ const ReservesTable = ({ data }) => {
       status: "",
       last_updated: "",
       auto_refill: "",
-      action: ""
+      action: "",
     });
   };
 
