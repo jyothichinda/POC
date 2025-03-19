@@ -202,7 +202,7 @@ const PoolingTable = ({ data }) => {
   const handleSubmit = async (values) => {
     try {
       const response = await axios.post(
-        "http://10.10.0.53:9898/save/pooling_data",
+        "http://10.10.0.11:9898/save/pooling",
         values
       );
       console.log(response);

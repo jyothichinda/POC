@@ -9,7 +9,7 @@ const App = () => {
     async function fetchData() {
       try {
         const res = await axios.get(
-          "http://10.10.0.53:9999/api/getAll_payments"
+          "http://10.10.0.11:9999/api/getAll_payments"
         );
         setData(res.data || []);
       } catch (error) {
@@ -19,7 +19,7 @@ const App = () => {
 
     fetchData();
     const eventSource = new EventSource(
-      "http://10.10.0.53:9898/transaction/sse"
+      "http://10.10.0.11:9898/transaction/sse"
     );
 
     eventSource.onopen = () => {

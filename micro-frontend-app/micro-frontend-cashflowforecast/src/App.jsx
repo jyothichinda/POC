@@ -21,7 +21,7 @@ const App = () => {
     async function fetchData() {
       try {
         const res = await axios.get(
-          "http://10.10.0.53:9999/api/Current_date_transactions"
+          "http://10.10.0.11:9999/api/Current_date_transactions"
         );
         setData(res.data || []);
       } catch (error) {
@@ -33,7 +33,7 @@ const App = () => {
     fetchData();
 
     const eventSource = new EventSource(
-      "http://10.10.0.53:9898/flow_chart/sse"
+      "http://10.10.0.11:9898/flow_chart/sse"
     );
 
     eventSource.onopen = () => {
