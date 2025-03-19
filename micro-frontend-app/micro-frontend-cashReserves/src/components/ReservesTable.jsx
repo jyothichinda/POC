@@ -302,9 +302,15 @@ const ReservesTable = ({ data }) => {
            <Form.Item
            label="Last Updated"
            name="last_updated"
-           rules={[{required: true, message: "please enter Last Updated "}]}
+           rules={[{required: true, message: "please enter Last Updated Date "}]}
            >
-            <Input placeholder = "Enter last updated" />
+             <DatePicker
+              format="YYYY-MM-DD"
+              style={{ width: "100%" }}
+              disabledDate={(current) =>
+                current && current < dayjs().startOf("day")
+              }
+            />
            </Form.Item>
 
            <Form.Item
