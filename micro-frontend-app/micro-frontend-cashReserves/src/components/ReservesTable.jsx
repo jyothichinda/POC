@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Table, Modal, Button, Card, Form, Input, InputNumber, DatePicker, Select, message } from "antd";
+import { Table, Modal, Button, Card, Form, Input, Select, message } from "antd";
 import {
   SettingOutlined,
   MinusSquareOutlined,
   PlusSquareOutlined,
-  EditOutlined
+  EditOutlined,
 } from "@ant-design/icons";
 import {
   DndContext,
@@ -21,18 +21,63 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import dayjs from "dayjs";
+import axios from "axios";
 
 const allColumns = [
-  { title: "Reserve Name", dataIndex: "reserve_name", key: "reserve_name", render: (text) => text || "--" },
-  { title: "Master Account", dataIndex: "master_account", key: "master_account", render: (text) => text || "--" },
-  { title: "Currency", dataIndex: "currency", key: "currency", render: (text) => text || "--" },
-  { title: "Reserved Amount", dataIndex: "reserved_amount", key: "reserved_amount", render: (text) => text || "--" },
-  { title: "Minimum Required", dataIndex: "minimum_required", key: "minimum_required", render: (text) => text || "--" },
-  { title: "Status", dataIndex: "status", key: "status", render: (text) => text || "--" },
-  { title: "Last Updated", dataIndex: "last_updated", key: "last_updated", render: (text) => text || "--" },
-  { title: "Auto Refill", dataIndex: "auto_refill", key: "auto_refill", render: (text) => text || "--" },
-  { title: "Action", dataIndex: "action", key: "action", render: (text) => text || "--" },
+  {
+    title: "Reserve Name",
+    dataIndex: "reserve_name",
+    key: "reserve_name",
+    render: (text) => text || "--",
+  },
+  {
+    title: "Master Account",
+    dataIndex: "master_account",
+    key: "master_account",
+    render: (text) => text || "--",
+  },
+  {
+    title: "Currency",
+    dataIndex: "currency",
+    key: "currency",
+    render: (text) => text || "--",
+  },
+  {
+    title: "Reserved Amount",
+    dataIndex: "reserved_amount",
+    key: "reserved_amount",
+    render: (text) => text || "--",
+  },
+  {
+    title: "Minimum Required",
+    dataIndex: "minimum_required",
+    key: "minimum_required",
+    render: (text) => text || "--",
+  },
+  {
+    title: "Status",
+    dataIndex: "status",
+    key: "status",
+    render: (text) => text || "--",
+  },
+  {
+    title: "Last Updated",
+    dataIndex: "last_updated",
+    key: "last_updated",
+    render: (text) => text || "--",
+  },
+  {
+    title: "Auto Refill",
+    dataIndex: "auto_refill",
+    key: "auto_refill",
+    render: (text) => text || "--",
+  },
+  {
+    title: "Action",
+    dataIndex: "action",
+    key: "action",
+    render: (text) => text || "--",
+  },
 ];
 
 // Sortable item component
@@ -136,7 +181,8 @@ const ReservesTable = ({ data }) => {
 
   const handleSubmit = async (values) => {
     try {
-      const response = await axios.post("",
+      const response = await axios.post(
+        "http://10.10.0.11:9898/save/cash_reserves",
         values
       );
       console.log(response);
@@ -248,42 +294,46 @@ const ReservesTable = ({ data }) => {
           </Form.Item>
 
           <Form.Item
-           label="Master Account"
-           name="master_account"
-           rules={[{required: true, message: "please enter Master Account"}]}
-           >
-            <Input placeholder = "Enter master account" />
-           </Form.Item>
+            label="Master Account"
+            name="master_account"
+            rules={[{ required: true, message: "please enter Master Account" }]}
+          >
+            <Input placeholder="Enter master account" />
+          </Form.Item>
 
-           <Form.Item
-           label="Currency"
-           name="currency"
-           rules={[{required: true, message: "please enter Currency "}]}
-           >
-            <Input placeholder = "Enter currency " />
-           </Form.Item>
+          <Form.Item
+            label="Currency"
+            name="currency"
+            rules={[{ required: true, message: "please enter Currency " }]}
+          >
+            <Input placeholder="Enter currency " />
+          </Form.Item>
 
-           <Form.Item
-           label="Reserved Amount"
-           name="reserved_amount"
-           rules={[{required: true, message: "please enter Reserved Amount "}]}
-           >
-            <Input placeholder = "Enter reserved amount " />
-           </Form.Item>
-           
-           <Form.Item
-           label="Minimum Required"
-           name="minimum_required"
-           rules={[{required: true, message: "please enter Minimum Required"}]}
-           >
-            <Input placeholder = "Enter minimum required" />
-           </Form.Item>
+          <Form.Item
+            label="Reserved Amount"
+            name="reserved_amount"
+            rules={[
+              { required: true, message: "please enter Reserved Amount " },
+            ]}
+          >
+            <Input placeholder="Enter reserved amount " />
+          </Form.Item>
 
-           <Form.Item
-           label="Status"
-           name="status"
-           rules={[{required: true, message: "please select a Status "}]}
-           >
+          <Form.Item
+            label="Minimum Required"
+            name="minimum_required"
+            rules={[
+              { required: true, message: "please enter Minimum Required" },
+            ]}
+          >
+            <Input placeholder="Enter minimum required" />
+          </Form.Item>
+
+          <Form.Item
+            label="Status"
+            name="status"
+            rules={[{ required: true, message: "please select a Status " }]}
+          >
             <Select
               showSearch
               placeholder="Select an option"
@@ -296,34 +346,30 @@ const ReservesTable = ({ data }) => {
                 { value: "Active", label: "Active" },
                 { value: "InActive", label: "InActive" },
               ]}
-            />  
-           </Form.Item>
+            />
+          </Form.Item>
 
-           <Form.Item
-           label="Last Updated"
-           name="last_updated"
-           rules={[{required: true, message: "please enter Last Updated "}]}
-           >
-            <Input placeholder = "Enter last updated" />
-           </Form.Item>
+          <Form.Item
+            label="Auto Refill"
+            name="auto_refill"
+            rules={[{ required: true, message: "please enter Auto Refill" }]}
+          >
+            <Select
+              showSearch
+              placeholder="Select an option"
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={[
+                { value: "yes", label: "Yes" },
+                { value: "no", label: "No" },
+              ]}
+            />
+          </Form.Item>
 
-           <Form.Item
-           label="Auto Refill"
-           name="auto_refill"
-           rules={[{required: true, message: "please enter Auto Refill"}]}
-           >
-            <Input placeholder = "Enter auto refill" />
-           </Form.Item>
-
-           <Form.Item
-           label="Action"
-           name="action"
-           rules={[{required: true, message: "please enter Action "}]}
-           >
-            <Input placeholder = "Enter action" />
-           </Form.Item>
-
-           <Form.Item>
+          <Form.Item>
             <Button onClick={resetReserveToDefault} style={{ marginRight: 10 }}>
               Reset to Default
             </Button>
@@ -331,9 +377,7 @@ const ReservesTable = ({ data }) => {
               Submit
             </Button>
           </Form.Item>
-
         </Form>
-
       </Modal>
 
       {/* Transactions Table */}

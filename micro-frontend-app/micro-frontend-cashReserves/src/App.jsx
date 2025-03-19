@@ -5,26 +5,24 @@ import ReservesTable from "./components/ReservesTable";
 const App = () => {
   const [data, setData] = useState([
     {
-      name: "Emergency Fund",
-      master: "XYZ LTD",
+      reserve_name: "Emergency Fund",
+      master_account: "XYZ LTD",
       currency: "USD",
-      amount: 500,
-      minRequired: 100,
+      reserved_amount: 500,
+      minimum_required: 100,
       status: "Completed",
-      lastUpdated: "03/03/2025 11:35:27",
-      autoRefill: true,
-      action: "",
+      last_updated: "03/03/2025 11:35:27",
+      auto_refill: "yes",
     },
     {
-      name: "Tax Reserve Fund",
-      master: "DEF LTD",
+      reserve_name: "Tax Reserve Fund",
+      master_account: "DEF LTD",
       currency: "INR",
-      amount: 400,
-      minRequired: 170,
+      reserved_amount: 400,
+      minimum_required: 170,
       status: "Pending",
-      lastUpdated: "03/03/2025 11:35:27",
-      autoRefill: false,
-      action: "",
+      last_updated: "03/03/2025 11:35:27",
+      auto_refill: "no",
     },
   ]);
 

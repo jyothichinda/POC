@@ -10,9 +10,32 @@ const App = () => {
 
   async function fetchProjectedData() {
     try {
-      const res = await axios.get("http://10.10.0.53:9898/projected_data");
-      console.log("Projected Data:", res.data.projectedData);
-      setProjectedData(res.data.projectedData || {});
+      const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+      const res = await axios.get(
+        `http://10.10.0.11:9898/projected_data?date=${today}`
+      );
+
+      const roundToTwo = (value) => Number(value).toFixed(2);
+
+      const formattedData = {
+        projectedCashInflow: roundToTwo(
+          res.data.projectedData.projectedCashInflow
+        ),
+        projectedCashOutflow: roundToTwo(
+          res.data.projectedData.projectedCashOutflow
+        ),
+        projectedClosingBalance: roundToTwo(
+          res.data.projectedData.projectedClosingBalance
+        ),
+        projectedNetCashFlow: roundToTwo(
+          res.data.projectedData.projectedNetCashFlow
+        ),
+        projectedOpeningBalance: roundToTwo(
+          res.data.projectedData.projectedOpeningBalance
+        ),
+      };
+
+      setProjectedData(formattedData);
     } catch (error) {
       console.error("Error fetching projected data:", error);
     }
