@@ -223,6 +223,7 @@ const SweepingTable = ({ data, fetchSweepingData }) => {
       frequency: "",
       status: "",
       next_execution: "",
+      threshold_limit: "",
       enable_auto_transfer: "",
     });
   };
@@ -301,6 +302,19 @@ const SweepingTable = ({ data, fetchSweepingData }) => {
               rules={[{ required: true, message: "Please enter Frequency" }]}
             >
               <Input placeholder="Enter frequency" />
+            </Form.Item>
+            <Form.Item
+              label="Threshold Limit"
+              name="threshold_limit"
+              rules={[
+                { required: true, message: "Please enter Threshold Limit" },
+              ]}
+            >
+              <InputNumber
+                style={{ width: "100%" }}
+                min={0}
+                placeholder="Enter Limit"
+              />
             </Form.Item>
 
             <Form.Item
