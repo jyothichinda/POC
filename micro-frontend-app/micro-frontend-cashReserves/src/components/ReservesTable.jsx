@@ -203,7 +203,7 @@ const ReservesTable = ({ data }) => {
       master_accounr: "",
       currency: "",
       reserved_amount: "",
-      minimun_required: "",
+      minimum_required: "",
       status: "",
       last_updated: "",
       auto_refill: "",
