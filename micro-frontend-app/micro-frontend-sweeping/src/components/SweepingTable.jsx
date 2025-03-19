@@ -87,9 +87,9 @@ const allColumns = [
     render: (text) => text || "--",
   },
   {
-    title: "Auto-Transfer Enabled",
-    dataIndex: "auto_transfer_enabled" || "--",
-    key: "auto_transfer_enabled",
+    title: "Enable Auto Transfer",
+    dataIndex: "enable_auto_transfer" || "--",
+    key: "enable_auto_transfer",
     render: (text) => text || "--",
   },
   { title: "Action", dataIndex: "action", key: "action" },
@@ -217,9 +217,13 @@ const SweepingTable = ({ data, fetchSweepingData }) => {
       currency: "",
       sweep_direction: "",
       frequency: "",
+      master_account: "",
+      currency: "",
+      sweep_direction: "",
+      frequency: "",
       status: "",
       next_execution: "",
-      auto_transfer_enabled: "",
+      enable_auto_transfer: ""
     });
   };
 
@@ -247,12 +251,12 @@ const SweepingTable = ({ data, fetchSweepingData }) => {
           onCancel={() => setModalVisible(false)}
           footer={null} // Remove default footer buttons
         >
-          <Form form={form} layout="vertical" onFinish={handleSubmit}>
-            <Form.Item
-              label="Sweep Name"
-              name="sweep_name"
-              rules={[{ required: true, message: "Please enter sweep name" }]}
-            >
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleSubmit}
+          >
+            <Form.Item label="Sweep Name" name="sweep_name" rules={[{ required: true, message: "Please enter sweep name" }]}>
               <Input placeholder="Enter sweep name" />
             </Form.Item>
 
