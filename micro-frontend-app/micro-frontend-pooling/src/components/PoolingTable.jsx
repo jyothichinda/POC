@@ -53,7 +53,7 @@ const allColumns = [
     title: "Participating Accounts",
     dataIndex: "participating_accounts",
     key: "participating_accounts",
-    render: (text) => text || "--",
+    render: (accounts) => accounts?.join(", ") || "--",
   },
   {
     title: "Status",
