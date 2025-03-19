@@ -142,7 +142,7 @@ const ConfigurationsTable = ({ data, fetchData }) => {
   const handleSubmit = async (values) => {
     try {
       const response = await axios.post(
-        "http://10.10.0.53:9898/save/masterThrottle_configuration",
+        "http://10.10.0.11:9898/save/masterThrottle_configuration",
         values
       );
       message.success("Configuration saved successfully!");

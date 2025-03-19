@@ -33,6 +33,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import dayjs from "dayjs";
+import axios from "axios";
 
 const allColumns = [
   { title: "Pool Name", dataIndex: "pool_name", key: "pool_name" },
@@ -92,8 +93,8 @@ const allColumns = [
   },
   {
     title: "Auto-Rebalancing",
-    dataIndex: "rebalancing",
-    key: "rebalancing",
+    dataIndex: "auto_rebalancing",
+    key: "auto_rebalancing",
     render: (text) => text || "--",
   },
   { title: "Action", dataIndex: "action", key: "action" },
@@ -202,7 +203,7 @@ const PoolingTable = ({ data }) => {
   const handleSubmit = async (values) => {
     try {
       const response = await axios.post(
-        "http://10.10.0.53:9898/save/pooling_data",
+        "http://10.10.0.11:9898/save/pooling",
         values
       );
       console.log(response);
@@ -227,7 +228,7 @@ const PoolingTable = ({ data }) => {
       balance: "",
       liquidity_threshold: "",
       interest: "",
-      rebalancing: "",
+      auto_rebalancing: "",
     });
   };
 
@@ -335,7 +336,12 @@ const PoolingTable = ({ data }) => {
               },
             ]}
           >
-            <Input placeholder="Enter Participating Accounts" />
+            <Select
+              mode="tags"
+              placeholder="Enter multiple accounts"
+              tokenSeparators={[","]} // Pressing comma adds a new value
+              allowClear
+            />
           </Form.Item>
 
           <Form.Item
@@ -380,8 +386,7 @@ const PoolingTable = ({ data }) => {
           </Form.Item>
           <Form.Item
             label="Threshold"
-            name="liquidity_threshold
-"
+            name="liquidity_threshold"
             rules={[{ required: true, message: "Please enter Threshold" }]}
           >
             <InputNumber
@@ -392,8 +397,7 @@ const PoolingTable = ({ data }) => {
           </Form.Item>
           <Form.Item
             label="Interest"
-            name="interest
-"
+            name="interest"
             rules={[{ required: true, message: "Please enter Interest Rate" }]}
           >
             <InputNumber
@@ -404,8 +408,7 @@ const PoolingTable = ({ data }) => {
           </Form.Item>
           <Form.Item
             label="Auto Rebalancing"
-            name="rebalancing
-"
+            name="auto_rebalancing"
             rules={[
               { required: true, message: "Please Select for Auto Rebalance" },
             ]}
