@@ -8,10 +8,11 @@ import CardsContainer from "./components/Cards";
 import RadialPieChartContainer from "./components/RadialPieChart";
 import AreaChartContainer from "./components/AreaChart";
 import BarChartContainer from "./components/BarChart";
-import SunburstChart from "./components/SunburstChart";
+import SunburstChart from "./components/SunburstChart"; 
 import CashFlowTable from "./components/Table";
 import BarWithLineChartContainer from "./components/BarWithLineChart";
-
+import GuageChart from "./components/GuageChart";
+import DonutChart from "./components/DonutChart"
 import "./index.css";
 
 const { Option } = Select;
@@ -392,7 +393,8 @@ const App = () => {
             <p style={{ textAlign: "center", padding: 0, margin: 0 }}>
               Cash OutFlows
             </p>
-            <SunburstChart data={cashFlowData} />
+
+            <SunburstChart data={apiMonthlyData[0]} />
           </Card>
         </Col>
       </Row>
@@ -403,11 +405,16 @@ const App = () => {
             <BarWithLineChartContainer data={apiMonthlyData[0]} />
           </Card>
         </Col>
+
         <Col span={8}>
-          <Card style={{ height: "100%" }}></Card>
+          <Card style={{ height: "100%" }}>   
+          <DonutChart data={apiMonthlyData[0]} />
+          </Card>
         </Col>
         <Col span={8}>
-          <Card style={{ height: "100%" }}></Card>
+          <Card style={{ height: "100%" }}>
+          <GuageChart data={apiMonthlyData[0]} />
+          </Card>
         </Col>
       </Row>
     </Layout>
