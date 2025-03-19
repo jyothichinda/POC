@@ -200,7 +200,7 @@ const ReservesTable = ({ data }) => {
   const resetReserveToDefault = () => {
     form.setFieldsValue({
       reserve_name: "",
-      master_accounr: "",
+      master_account: "",
       currency: "",
       reserved_amount: "",
       minimum_required: "",
