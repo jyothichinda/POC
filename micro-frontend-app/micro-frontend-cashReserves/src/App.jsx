@@ -28,22 +28,19 @@ const App = () => {
     },
   ]);
 
-  useEffect(() => {
-    const eventSource = new EventSource("backend url");
+  async function fetchData() {
+    try {
+      const response = await axios.get(
+        "http://10.10.0.11:9898/get/cash_reserves"
+      );
+      setData(response.data || []);
+    } catch (error) {
+      console.log("Error while fetching http response:", error);
+    }
+  }
 
-    eventSource.onmessage = (event) => {
-      try {
-        const newData = JSON.parse(event.data);
-        setData((prev) => [...prev, newData]);
-      } catch (error) {
-        console.log("Failed to parse SSE data:", error);
-      }
-    };
-    eventSource.onerror = () => {
-      console.error("SSE Connection Failed!!");
-      eventSource.close();
-    };
-    return () => eventSource.close();
+  useEffect(() => {
+    fetchData();
   }, []);
 
   return <ReservesTable data={data} />;

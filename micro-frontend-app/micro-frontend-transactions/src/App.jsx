@@ -5,18 +5,16 @@ import TransactionsTable from "./components/TransactionsTable";
 const App = () => {
   const [data, setData] = useState([]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await axios.get(
-          "http://10.10.0.11:9999/api/getAll_payments"
-        );
-        setData(res.data || []);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+  async function fetchData() {
+    try {
+      const res = await axios.get("http://10.10.0.11:9999/api/getAll_payments");
+      setData(res.data || []);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
+  }
 
+  useEffect(() => {
     fetchData();
     const eventSource = new EventSource(
       "http://10.10.0.11:9898/transaction/sse"

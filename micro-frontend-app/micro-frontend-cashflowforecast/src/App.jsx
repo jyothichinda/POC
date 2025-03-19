@@ -8,27 +8,27 @@ const App = () => {
   const [data, setData] = useState([]);
   const [projectedData, setProjectedData] = useState({});
 
-  useEffect(() => {
-    async function fetchProjectedData() {
-      try {
-        const res = await axios.get("http://10.10.0.53:9898/projected_data");
-        console.log("Projected Data:", res.data.projectedData);
-        setProjectedData(res.data.projectedData || {});
-      } catch (error) {
-        console.error("Error fetching projected data:", error);
-      }
+  async function fetchProjectedData() {
+    try {
+      const res = await axios.get("http://10.10.0.53:9898/projected_data");
+      console.log("Projected Data:", res.data.projectedData);
+      setProjectedData(res.data.projectedData || {});
+    } catch (error) {
+      console.error("Error fetching projected data:", error);
     }
-    async function fetchData() {
-      try {
-        const res = await axios.get(
-          "http://10.10.0.11:9999/api/Current_date_transactions"
-        );
-        setData(res.data || []);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+  }
+  async function fetchData() {
+    try {
+      const res = await axios.get(
+        "http://10.10.0.11:9999/api/Current_date_transactions"
+      );
+      setData(res.data || []);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
+  }
 
+  useEffect(() => {
     fetchProjectedData(); // Call async function
     fetchData();
 
