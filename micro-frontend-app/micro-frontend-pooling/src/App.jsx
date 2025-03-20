@@ -7,7 +7,7 @@ const App = () => {
 
   async function fetchPoolingData() {
     try {
-      const res = await axios.get("http://10.10.0.11:9898/pooling_data");
+      const res = await axios.get("http://192.168.1.9:9898/pooling_data");
       setData(res.data || {});
     } catch (error) {
       console.error("Error fetching projected data:", error);
@@ -18,7 +18,7 @@ const App = () => {
     fetchPoolingData(); // Call async function
   }, []);
 
-  return <PoolingTable data={data} />;
+  return <PoolingTable data={data} fetchData={fetchPoolingData} />;
 };
 
 export default App;

@@ -139,7 +139,7 @@ const SortableItem = ({ column, isChecked, onToggle }) => {
   );
 };
 
-const PoolingTable = ({ data }) => {
+const PoolingTable = ({ data, fetchData }) => {
   // Load preferences from local storage
   const savedColumns =
     JSON.parse(localStorage.getItem("selectedColumns")) ||
@@ -203,7 +203,7 @@ const PoolingTable = ({ data }) => {
   const handleSubmit = async (values) => {
     try {
       const response = await axios.post(
-        "http://10.10.0.11:9898/save/pooling",
+        "http://192.168.1.9:9898/save/pooling",
         values
       );
       console.log(response);
