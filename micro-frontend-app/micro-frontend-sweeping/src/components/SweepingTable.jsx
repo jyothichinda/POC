@@ -134,7 +134,7 @@ const SortableItem = ({ column, isChecked, onToggle }) => {
   );
 };
 
-const SweepingTable = ({ data, fetchSweepingData }) => {
+const SweepingTable = ({ data, fetchData }) => {
   // Load preferences from local storage
   const savedColumns =
     JSON.parse(localStorage.getItem("selectedColumns")) ||
@@ -197,7 +197,7 @@ const SweepingTable = ({ data, fetchSweepingData }) => {
   const handleSubmit = async (values) => {
     try {
       const response = await axios.post(
-        "http://10.10.0.11:9898/save/sweeping",
+        "http://192.168.1.9:9898/save/sweeping",
         values
       );
       message.success("Sweeping saved successfully!");
