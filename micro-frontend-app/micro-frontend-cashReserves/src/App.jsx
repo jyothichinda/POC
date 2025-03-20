@@ -46,7 +46,7 @@ const App = () => {
   async function fetchData() {
     try {
       const response = await axios.get(
-        "http://10.10.0.11:9898/get/cash_reserves"
+        "http://192.168.1.9:9898/get/cash_reserves"
       );
       const formattedData = response.data.map((item) => ({
         ...item,
@@ -62,7 +62,7 @@ const App = () => {
     fetchData();
   }, []);
 
-  return <ReservesTable data={data} />;
+  return <ReservesTable data={data} fetchData={fetchData} />;
 };
 
 export default App;

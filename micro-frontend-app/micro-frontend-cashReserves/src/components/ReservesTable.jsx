@@ -119,7 +119,7 @@ const SortableItem = ({ column, isChecked, onToggle }) => {
   );
 };
 
-const ReservesTable = ({ data }) => {
+const ReservesTable = ({ data, fetchData }) => {
   // Load preferences from local storage
   const savedColumns =
     JSON.parse(localStorage.getItem("selectedColumns")) ||
@@ -182,7 +182,7 @@ const ReservesTable = ({ data }) => {
   const handleSubmit = async (values) => {
     try {
       const response = await axios.post(
-        "http://10.10.0.11:9898/save/cash_reserves",
+        "http://192.168.1.9:9898/save/cash_reserves",
         values
       );
       console.log(response);
