@@ -200,10 +200,10 @@ const ReservesTable = ({ data, fetchData }) => {
   const resetReserveToDefault = () => {
     form.setFieldsValue({
       reserve_name: "",
-      master_accounr: "",
+      master_account: "",
       currency: "",
       reserved_amount: "",
-      minimun_required: "",
+      minimum_required: "",
       status: "",
       last_updated: "",
       auto_refill: "",
