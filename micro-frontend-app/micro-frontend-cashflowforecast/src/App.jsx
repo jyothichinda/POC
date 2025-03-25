@@ -1,12 +1,38 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Row } from "antd";
+import { Row, Layout } from "antd";
 import ActualDataTable from "./components/ActualDataTable";
 import CardsContainer from "./components/Cards";
+import SideNav from "./components/SideNav";
+import "./index.css";
+
+const { Sider, Content } = Layout;
 
 const App = () => {
   const [data, setData] = useState([]);
   const [projectedData, setProjectedData] = useState({});
+  const [levels, setLevels] = useState([
+    { level: "Bank Level", parentLevel: "Root" },
+    { level: "Instant Level", parentLevel: "Bank Level" },
+    { level: "B2B Level", parentLevel: "Instant Level" },
+    { level: "B2C Level", parentLevel: "Instant Level" },
+    { level: "STP Level", parentLevel: "Bank Level" },
+    { level: "Cheque Level", parentLevel: "Bank Level" },
+  ]);
+
+  const handleLevelClick = async (level, parentLevel) => {
+    try {
+      console.log(
+        `Fetching data for Level: ${level}, Parent Level: ${parentLevel}`
+      );
+      const res = await axios.get(
+        `http://10.10.0.11:3007/api/filter_data?level=${level}&parentLevel=${parentLevel}`
+      );
+      setData(res.data || []);
+    } catch (error) {
+      console.error("Error fetching filtered data:", error);
+    }
+  };
 
   async function fetchProjectedData() {
     try {
@@ -51,9 +77,19 @@ const App = () => {
     }
   }
 
+  async function fetchLevels() {
+    try {
+      const res = await axios.get("http://10.10.0.11:3007/api/levels");
+      setLevels(res.data || []); // Set levels for SideNav
+    } catch (error) {
+      console.error("Error fetching levels:", error);
+    }
+  }
+
   useEffect(() => {
     fetchProjectedData(); // Call async function
     fetchData();
+    fetchLevels(); // Fetch levels for SideNav
 
     const eventSource = new EventSource(
       "http://10.10.0.11:9898/flow_chart/sse"
@@ -113,10 +149,22 @@ const App = () => {
   }, []);
 
   return (
-    <Row gutter={[16, 16]}>
-      <CardsContainer data={data} projectedData={projectedData} />
-      <ActualDataTable data={data} />
-    </Row>
+    <Layout style={{ minHeight: "100vh" }}>
+      {/* Side Navigation */}
+      <Sider>
+        <SideNav levels={levels} onLevelClick={handleLevelClick} />
+      </Sider>
+
+      {/* Main Content */}
+      <Layout>
+        <Content style={{ padding: "16px" }}>
+          <Row gutter={[16, 16]}>
+            <CardsContainer data={data} projectedData={projectedData} />
+            <ActualDataTable data={data} />
+          </Row>
+        </Content>
+      </Layout>
+    </Layout>
   );
 };
 
