@@ -5,35 +5,20 @@ const CashFlowTable = (props) => {
   const { data } = props;
 
   const columns = [
-    {
-      title: "#",
-      dataIndex: "id",
-      key: "id",
-    },
-    {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
-    },
-    {
-      title: "Payer",
-      dataIndex: "payer",
-      key: "payer",
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-    },
-    {
-      title: "Due Date",
-      dataIndex: "date",
-      key: "date",
-    },
+    { title: "Debtor", dataIndex: "debtorName", key: "debtorName" },
+    { title: "Status", dataIndex: "status", key: "status" },
+    { title: "Txn Amount", dataIndex: "amount", key: "amount" },
+    { title: "In/Out-flow", dataIndex: "cashFlow", key: "cashFlow" },
   ];
 
   return (
-    <Table rowKey="id" columns={columns} dataSource={data} pagination={false} />
+    <Table
+      rowKey="id"
+      columns={columns}
+      dataSource={data}
+      pagination={false}
+      scroll={{ y: 300 }}
+    />
   );
 };
 

@@ -1,95 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Row, Col, Select, Typography, Card } from "antd";
+import { Layout, Row, Col, Select, Typography, Card, Tabs } from "antd";
 import moment from "moment-timezone";
-import { Tabs } from "antd";
 
 import DashBoardSkeleton from "./components/DashboardSkeleton";
 import CardsContainer from "./components/Cards";
-import RadialPieChartContainer from "./components/RadialPieChart";
 import AreaChartContainer from "./components/AreaChart";
-import BarChartContainer from "./components/BarChart";
-import SunburstChart from "./components/SunburstChart"; 
-import CashFlowTable from "./components/Table";
 import BarWithLineChartContainer from "./components/BarWithLineChart";
+import SunburstChart from "./components/SunburstChart";
+import CashFlowTable from "./components/Table";
 import GuageChart from "./components/GuageChart";
-import DonutChart from "./components/DonutChart"
+import DonutChart from "./components/DonutChart";
+import axios from "axios";
 import "./index.css";
 
 const { Option } = Select;
 
 const App = () => {
   const [loading, setLoading] = useState(true);
-  const timezones = moment.tz.names(); // Get all timezones
+  const [projectedData, setProjectedData] = useState([]);
+  const [txnData, setTxnData] = useState([]);
+
   const [selectedTimezone, setSelectedTimezone] = useState(
     localStorage.getItem("selectedTimezone") || "UTC"
   );
   const [currentTime, setCurrentTime] = useState(moment().tz(selectedTimezone));
 
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-  }); //replace with api call using SSE and pass props into card component
-
-  //dummy data
-  const apiDummyData = [
-    {
-      id: 1,
-      title: "Opening Balance",
-      amount: "50000.00",
-      cashFlowType: "inflow",
-      stats: "+5% over prev hour",
-      currency: "USD",
-      date: "",
-    },
-    {
-      id: 2,
-      title: "Projected Cash Inflow",
-      amount: "32000.00",
-      cashFlowType: "inflow",
-      stats: "+8% over prev hour",
-      currency: "USD",
-    },
-    {
-      id: 3,
-      title: "Projected Cash Outflow",
-      amount: "18000.00",
-      cashFlowType: "outflow",
-      stats: "+6% over prev hour",
-      currency: "USD",
-    },
-    {
-      id: 4,
-      title: "Projected Net Cash Flow",
-      amount: "14000.00",
-      cashFlowType: "inflow",
-      stats: "+12% over prev hour",
-      currency: "USD",
-    },
-    {
-      id: 5,
-      title: "AI Forecast Accuracy",
-      confidenceScore: "85",
-    },
-    {
-      id: 6,
-      title: "Current Cash InFlow",
-      amount: "4500.00",
-      cashFlowType: "inflow",
-      stats: "+7% over prev hour",
-      currency: "USD",
-    },
-    {
-      id: 7,
-      title: "Current Cash OutFlow",
-      amount: "6200.00",
-      cashFlowType: "outflow",
-      stats: "+4% over prev hour",
-      currency: "USD",
-    },
-  ];
-
-  //hourly dummy data
   const apiHourlyData = [
     {
       timestamp: "2024-02-25 00:00",
@@ -115,81 +50,8 @@ const App = () => {
       amount: 950.3,
       currency: "USD",
     },
-    {
-      timestamp: "2024-02-25 06:00",
-      title: "Current Cash InFlow",
-      amount: 1500.2,
-      currency: "USD",
-    },
-    {
-      timestamp: "2024-02-25 06:00",
-      title: "Current Cash OutFlow",
-      amount: 1300.6,
-      currency: "USD",
-    },
-    {
-      timestamp: "2024-02-25 09:00",
-      title: "Current Cash InFlow",
-      amount: 1700.4,
-      currency: "USD",
-    },
-    {
-      timestamp: "2024-02-25 09:00",
-      title: "Current Cash OutFlow",
-      amount: 1450.8,
-      currency: "USD",
-    },
-    {
-      timestamp: "2024-02-25 12:00",
-      title: "Current Cash InFlow",
-      amount: 1900.6,
-      currency: "USD",
-    },
-    {
-      timestamp: "2024-02-25 12:00",
-      title: "Current Cash OutFlow",
-      amount: 1600.5,
-      currency: "USD",
-    },
-    {
-      timestamp: "2024-02-25 23:10",
-      title: "Current Cash InFlow",
-      amount: 2100.3,
-      currency: "USD",
-    },
-    {
-      timestamp: "2024-02-25 15:00",
-      title: "Current Cash OutFlow",
-      amount: 1750.9,
-      currency: "USD",
-    },
-    {
-      timestamp: "2024-02-25 00:00",
-      title: "Current Cash InFlow",
-      amount: 1000.5,
-    },
-    {
-      timestamp: "2024-02-25 21:30",
-      title: "Current Cash OutFlow",
-      amount: 500.25,
-    },
-    {
-      timestamp: "2024-02-25 03:00",
-      title: "Current Cash InFlow",
-      amount: 1200.0,
-    },
-    {
-      timestamp: "2024-02-25 06:45",
-      title: "Current Cash OutFlow",
-      amount: 980.3,
-    },
-    {
-      timestamp: "2024-02-25 14:00",
-      title: "Current Cash OutFlow",
-      amount: 1750.9,
-    },
   ];
-  //monthly dummy data
+
   const apiMonthlyData = [
     {
       categories: [
@@ -217,88 +79,88 @@ const App = () => {
       ],
     },
   ];
-  const apiIncomingTxnData = [
-    {
-      id: "MSG123",
-      amount: "$14,000",
-      payer: "ABC Corp",
-      status: "Pending",
-      date: "05/03/2024",
-    },
-    {
-      id: "MSG124",
-      amount: "$15,000",
-      payer: "ABC Corp",
-      status: "Completed",
-      date: "05/03/2024",
-    },
-  ];
-  const apiPendingPaymentData = [
-    {
-      id: "MSG123",
-      amount: "$14,000",
-      payer: "ABC Corp",
-      status: "Pending",
-      date: "06/03/2024",
-    },
-    {
-      id: "MSG124",
-      amount: "$15,000",
-      payer: "ABC Corp",
-      status: "Completed",
-      date: "06/03/2024",
-    },
-  ];
-
-  //should also have data for cash inflow and outflow for each hour of the day
-  const cardData = apiDummyData.filter((item) =>
-    [
-      "Opening Balance",
-      "Projected Cash Inflow",
-      "Projected Cash Outflow",
-      "Projected Net Cash Flow",
-      "AI Forecast Accuracy",
-    ].includes(item.title)
-  );
-
-  const cashFlowData = apiDummyData.filter((item) =>
-    ["Current Cash InFlow", "Current Cash OutFlow"].includes(item.title)
-  );
-  const cashInFlowData = apiDummyData.filter((item) =>
-    ["Current Cash InFlow", "Projected Cash Inflow"].includes(item.title)
-  );
-  const cashOutFlowData = apiDummyData.filter((item) =>
-    ["Current Cash OutFlow", "Projected Cash Outflow"].includes(item.title)
-  );
 
   const handleTimezoneChange = (value) => {
     setSelectedTimezone(value);
-    localStorage.setItem("selectedTimezone", value); // Save to localStorage
+    localStorage.setItem("selectedTimezone", value);
   };
 
+  async function fetchProjectedData() {
+    try {
+      const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+      const res = await axios.get(
+        `http://192.168.1.2:9898/projected_data?date=${today}`
+      );
+
+      const roundToTwo = (value) => Number(value).toFixed(2);
+
+      // Convert the response into an array format
+      const formattedData = Object.entries(res.data.projectedData).map(
+        ([key, value]) => ({
+          id: key, // Use the key as a unique identifier
+          title: formatTitle(key), // Format the key into a readable title
+          amount: roundToTwo(value), // Round the value to two decimal places
+          currency: "USD", // Add a default currency
+        })
+      );
+      setProjectedData(formattedData);
+    } catch (error) {
+      console.error("Error fetching projected data:", error);
+    }
+  }
+
+  async function fetchTxnData() {
+    try {
+      const res = await axios.get(
+        "http://192.168.1.2:9999/api/getAll_payments"
+      );
+      setTxnData(res.data || []);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  // Helper function to format keys into readable titles
+  function formatTitle(key) {
+    const titleMap = {
+      projectedOpeningBalance: "Projected Opening Balance",
+      projectedCashInflow: "Projected Cash Inflow",
+      projectedCashOutflow: "Projected Cash Outflow",
+      projectedNetCashFlow: "Projected Net Cash Flow",
+      projectedClosingBalance: "Projected Closing Balance",
+    };
+
+    return titleMap[key] || key; // Fallback to the key if no mapping is found
+  }
+
   useEffect(() => {
+    // Simulate loading
+    setTimeout(() => setLoading(false), 2000);
+
     // Update time every second
     const interval = setInterval(() => {
       setCurrentTime(moment().tz(selectedTimezone));
     }, 1000);
 
-    return () => clearInterval(interval); // Cleanup on unmount
+    return () => clearInterval(interval);
   }, [selectedTimezone]);
 
-  return loading ? (
-    <DashBoardSkeleton />
-  ) : (
+  useEffect(() => {
+    fetchProjectedData();
+    fetchTxnData();
+  }, []);
+
+  if (loading) return <DashBoardSkeleton />;
+
+  return (
     <Layout style={{ padding: "10px", maxWidth: "100%", margin: "0 auto" }}>
-      {/* should add header and sidenav when integrated with main micro frontend component */}
+      {/* Header */}
       <Row
         justify="space-between"
-        align="stretch"
-        style={{ height: "2vh", padding: "0 10px 10px", marginBottom: "2%" }}
+        align="middle"
+        style={{ marginBottom: "2%" }}
       >
-        <Typography.Title>
-          <h5>AI insights:</h5>
-          <p>{}</p>
-        </Typography.Title>
+        <Typography.Title level={5}>AI Insights</Typography.Title>
         <div>
           <Typography.Title level={2} type="success">
             {currentTime.format("HH:mm:ss")}
@@ -313,7 +175,7 @@ const App = () => {
               option?.value.toLowerCase().includes(input.toLowerCase())
             }
           >
-            {timezones.map((zone) => (
+            {moment.tz.names().map((zone) => (
               <Option key={zone} value={zone}>
                 {zone}
               </Option>
@@ -321,99 +183,60 @@ const App = () => {
           </Select>
         </div>
       </Row>
-      {/* ROW 1 - Cards (5 Cards, Each in 5 Columns) */}
+
+      {/* Cards */}
+      <Row gutter={[16, 16]} justify="center" style={{ marginBottom: "2%" }}>
+        <CardsContainer cardData={projectedData} />
+      </Row>
+
+      {/* Charts Row 1 */}
       <Row
         gutter={[16, 16]}
-        justify="center"
-        style={{ height: "25vh", width: "100%" }}
+        justify="space-evenly"
+        style={{ marginBottom: "2%" }}
       >
-        <CardsContainer cardData={cardData} />
-      </Row>
-      {/* Row 2 - Charts (30% height) */}
-      <Row justify="space-evenly" align="top" style={{ height: "30vh" }}>
-        <Col span={8} style={{ height: "100%" }}>
-          <Card
-            style={{
-              padding: 0,
-              margin: 0,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center", // Ensures content is vertically aligned
-              height: "100%",
-            }}
-          >
-            <p
-              style={{
-                textAlign: "center",
-                padding: 0,
-                margin: 0,
-              }}
-            >
-              Net Balance
-            </p>
-            <div
-              style={{ display: "flex", flexDirection: "row", height: "100%" }}
-            >
-              <AreaChartContainer data={apiHourlyData} />
-            </div>
+        <Col span={8}>
+          <Card title="Net Balance" style={{ height: "100%" }}>
+            <AreaChartContainer data={apiHourlyData} />
           </Card>
         </Col>
-        <Col span={8} style={{ height: "100%" }}>
-          <Card
-            style={{
-              padding: 0,
-              margin: 0,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center", // Ensures content is vertically aligned
-              height: "100%",
-            }}
-          >
-            <Tabs defaultActiveKey="1" centered>
-              <Tabs.TabPane tab="Incoming Transactions" key="1">
-                <CashFlowTable data={apiIncomingTxnData} type="payments" />
-              </Tabs.TabPane>
-              <Tabs.TabPane tab="Pending Payments" key="2">
-                <CashFlowTable data={apiPendingPaymentData} type="payments" />
-              </Tabs.TabPane>
-            </Tabs>
+        <Col span={8}>
+          <Card style={{ height: "100%" }}>
+            <Tabs
+              defaultActiveKey="1"
+              centered
+              items={[
+                {
+                  key: "1",
+                  label: "Transactions",
+                  children: <CashFlowTable data={txnData} type="payments" />,
+                },
+              ]}
+            />
           </Card>
         </Col>
-        <Col span={8} style={{ height: "100%" }}>
-          <Card
-            style={{
-              padding: 0,
-              margin: 0,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center", // Ensures content is vertically aligned
-              height: "100%",
-            }}
-          >
-            <p style={{ textAlign: "center", padding: 0, margin: 0 }}>
-              Cash OutFlows
-            </p>
-
+        <Col span={8}>
+          <Card title="Cash Outflows" style={{ height: "100%" }}>
             <SunburstChart data={apiMonthlyData[0]} />
           </Card>
         </Col>
       </Row>
-      {/* Row 3 - Charts (30% height) */}
-      <Row style={{ height: "30vh" }}>
+
+      {/* Charts Row 2 */}
+      <Row gutter={[16, 16]}>
         <Col span={8}>
           <Card style={{ height: "100%" }}>
             <BarWithLineChartContainer data={apiMonthlyData[0]} />
           </Card>
         </Col>
-
         <Col span={8}>
-          <Card style={{ height: "100%" }}>   
-          <DonutChart data={apiMonthlyData[0]} />
+          <Card style={{ height: "100%" }}>
+            <DonutChart data={apiMonthlyData[0]} />
           </Card>
         </Col>
         <Col span={8}>
           <Card style={{ height: "100%" }}>
-          <GuageChart data={apiMonthlyData[0]} />
+            <GuageChart data={apiMonthlyData[0]} />
           </Card>
         </Col>
       </Row>

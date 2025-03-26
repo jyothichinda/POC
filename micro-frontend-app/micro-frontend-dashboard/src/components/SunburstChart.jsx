@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import * as d3 from "d3";
 
-const SunburstChart = ({ data}) => {
+const SunburstChart = ({ data }) => {
   const chartRef = useRef(null);
 
   useEffect(() => {
@@ -9,8 +9,10 @@ const SunburstChart = ({ data}) => {
 
     // Clear previous SVG
     d3.select(chartRef.current).selectAll("*").remove();
-    const width = '100%';
-    const height = '100%';
+
+    // Set numeric width and height
+    const width = 400; // Set a fixed width in pixels
+    const height = 400; // Set a fixed height in pixels
     const radius = Math.min(width, height) / 2;
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
@@ -58,15 +60,13 @@ const SunburstChart = ({ data}) => {
       .enter()
       .append("text")
       .attr("transform", (d) => {
-        const x = (d.x0 + d.x1) / 2;
-        const y = (d.y0 + d.y1) / 2;
-        return `translate(${arc.centroid(d)}) rotate(${(x * 180) / Math.PI})`;
+        const [x, y] = arc.centroid(d);
+        return `translate(${x},${y})`;
       })
       .attr("text-anchor", "middle")
       .text((d) => d.data.name)
       .style("font-size", "10px")
       .style("fill", "#fff");
-
   }, [data]);
 
   return <div ref={chartRef} />;
