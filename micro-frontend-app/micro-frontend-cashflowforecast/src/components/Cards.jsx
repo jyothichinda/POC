@@ -22,10 +22,11 @@ const CardSkeletonLoader = () => (
   </Col>
 );
 
-const CardsContainer = ({ projectedData = {}, data = [] }) => {
+const CardsContainer = ({ projectedData = {}, data = [], levels = [] }) => {
   const [loading, setLoading] = useState(true);
   const [openingBalance, setOpeningBalance] = useState(""); // User-provided opening balance
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
+  const [selectedLevel, setSelectedLevel] = useState(null); // Track the selected level
 
   const cardItems = [
     { title: "Opening Balance", key: "OpeningBalance" },
@@ -65,11 +66,19 @@ const CardsContainer = ({ projectedData = {}, data = [] }) => {
     }
 
     try {
-      await axios.post("http://192.168.1.2:9898/api/openingBalance", {
-        openingBalance: parseFloat(openingBalance),
-      });
+      // Update the opening_Balance for the selected level
+      const updatedLevels = levels.map((level) =>
+        level.level === selectedLevel.level
+          ? { ...level, opening_Balance: parseFloat(openingBalance) }
+          : level
+      );
+
+      // Send the updated levels to the backend
+      await axios.put("http://192.168.1.2:9898/updateConfig", updatedLevels);
+
       message.success("Opening balance submitted successfully!");
       setIsModalVisible(false); // Close the modal after submission
+      setOpeningBalance(""); // Reset the input field
     } catch (error) {
       console.error("Error submitting opening balance:", error);
       message.error("Failed to submit opening balance");
@@ -81,17 +90,19 @@ const CardsContainer = ({ projectedData = {}, data = [] }) => {
       setLoading(false);
     }, 2000);
 
-    // Show modal by default if no opening balance is provided
-    if (!openingBalance) {
+    // Automatically show modal for the root level if opening balance is 0
+    const rootLevel = levels.find((level) => level.level === "Root Level");
+    if (rootLevel && rootLevel.opening_Balance === 0) {
+      setSelectedLevel(rootLevel);
       setIsModalVisible(true);
     }
-  }, [openingBalance]);
+  }, [levels]);
 
   return (
     <div>
       {/* Modal for Opening Balance */}
       <Modal
-        title="Set Opening Balance"
+        title={`Set Opening Balance for ${selectedLevel?.level || "Level"}`}
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}

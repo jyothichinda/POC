@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Row, Layout } from "antd";
+import {
+  Row,
+  Layout,
+  Modal,
+  InputNumber,
+  Button,
+  message,
+  Spin,
+  Menu,
+} from "antd";
 import ActualDataTable from "./components/ActualDataTable";
 import CardsContainer from "./components/Cards";
 import SideNav from "./components/SideNav";
@@ -12,18 +21,34 @@ const App = () => {
   const [data, setData] = useState([]);
   const [projectedData, setProjectedData] = useState({});
   const [levels, setLevels] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
+  const [openingBalance, setOpeningBalance] = useState(0); // User-provided opening balance
+  const [selectedLevel, setSelectedLevel] = useState(null); // Track the selected level
+  const [loading, setLoading] = useState(true); // Loader state
 
   const handleLevelClick = async (level, parentLevel) => {
     try {
-      console.log(
-        `Fetching data for Level: ${level}, Parent Level: ${parentLevel}`
+      console.log("Clicked Level:", level);
+      console.log("Levels Array:", levels);
+
+      // Find the selected level
+      const selected = levels.find(
+        (item) => item.value.trim().toLowerCase() === level.trim().toLowerCase()
       );
-      const res = await axios.get(
-        `http://192.168.1.2:9898/api/filter_data?level=${encodeURIComponent(
-          level
-        )}&parentLevel=${encodeURIComponent(parentLevel)}`
-      );
-      setData(res.data || []);
+      console.log("Selected Level:", selected);
+
+      if (selected && Number(selected.opening_Balance) === 0) {
+        setSelectedLevel(selected); // Track the selected level
+        setIsModalVisible(true); // Show the modal
+      } else {
+        // Fetch data for the selected level
+        const res = await axios.get(
+          `http://192.168.1.2:9898/api/filter_data?level=${encodeURIComponent(
+            level
+          )}&parentLevel=${encodeURIComponent(parentLevel)}`
+        );
+        setData(res.data || []);
+      }
     } catch (error) {
       console.error("Error fetching filtered data:", error);
     }
@@ -61,6 +86,31 @@ const App = () => {
       console.error("Error fetching projected data:", error);
     }
   }
+
+  async function fetchLevels() {
+    try {
+      const res = await axios.get("http://192.168.1.2:9898/relation");
+      const levels = res.data.map((item) => ({
+        value: item.level.trim(), // Trim spaces to avoid mismatches
+        label: item.level.trim(),
+        parentLevel: item.parent_Level,
+        opening_Balance: item.opening_Balance,
+        id: item.id,
+      }));
+
+      // Remove duplicates
+      const uniqueLevels = levels.filter(
+        (level, index, self) =>
+          index === self.findIndex((l) => l.value === level.value)
+      );
+
+      console.log("Unique Levels:", uniqueLevels); // Debugging log
+      setLevels(uniqueLevels);
+    } catch (error) {
+      console.error("Error fetching levels:", error);
+    }
+  }
+
   async function fetchData() {
     try {
       const res = await axios.get(
@@ -72,28 +122,38 @@ const App = () => {
     }
   }
 
-  async function fetchLevels() {
+  const handleSubmitOpeningBalance = async () => {
     try {
-      const res = await axios.get("http://192.168.1.2:9898/relation");
+      // Update the opening_Balance in the levels state
+      const updatedLevels = levels.map((level) =>
+        level.value === selectedLevel.value
+          ? { ...level, opening_Balance: openingBalance }
+          : level
+      );
 
-      // Map the response to match the dropdown and menu format
-      const levels = res.data.map((item) => ({
-        value: item.level, // Use `level` as the value
-        label: item.level, // Use `level` as the label for dropdown
-        parentLevel: item.parent_Level, // Include `parent_Level` for hierarchy
-      }));
+      // Send the updated levels to the backend
+      await axios.put("http://192.168.1.2:9898/updateConfig", updatedLevels);
 
-      setLevels(levels); // Set levels for SideNav
-      console.log("Levels fetched and mapped:", levels);
+      message.success("Opening balance submitted successfully!");
+
+      // Update the levels state and fetch actual data
+      setLevels(updatedLevels);
+      fetchData(); // Fetch actual data after submission
+      setIsModalVisible(false); // Close the modal
     } catch (error) {
-      console.error("Error fetching levels:", error);
+      console.error("Error submitting opening balance:", error);
+      message.error("Failed to submit opening balance.");
     }
-  }
+  };
 
   useEffect(() => {
-    fetchProjectedData(); // Call async function
-    fetchData();
-    fetchLevels(); // Fetch levels for SideNav
+    const fetchAllData = async () => {
+      setLoading(true); // Show loader before fetching data
+      await Promise.all([fetchProjectedData(), fetchData(), fetchLevels()]);
+      setLoading(false); // Hide loader after all data is fetched
+    };
+
+    fetchAllData();
 
     const eventSource = new EventSource(
       "http://10.10.0.11:9898/flow_chart/sse"
@@ -152,18 +212,69 @@ const App = () => {
     };
   }, []);
 
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <Spin size="large" />
+      </div>
+    );
+  }
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
+      {/* Modal for Opening Balance */}
+      <Modal
+        title={`Set Opening Balance for ${selectedLevel?.value || "Level"}`}
+        open={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null}
+        closable={false} // Prevent closing the modal without setting the balance
+      >
+        <InputNumber
+          placeholder="Enter Opening Balance"
+          value={openingBalance}
+          onChange={(value) => setOpeningBalance(value)}
+          style={{ marginBottom: "16px", width: "100%" }}
+          min={0} // Prevent negative values
+        />
+        <Button
+          type="primary"
+          onClick={handleSubmitOpeningBalance}
+          block
+          disabled={openingBalance === null || openingBalance === ""}
+        >
+          Submit Opening Balance
+        </Button>
+      </Modal>
+
       {/* Side Navigation */}
       <Sider>
         <SideNav levels={levels} onLevelClick={handleLevelClick} />
+        <Menu
+          onClick={({ key }) => handleLevelClick(key, null)}
+          items={levels.map((level) => ({
+            key: level.value,
+            label: level.label,
+          }))}
+        />
       </Sider>
 
       {/* Main Content */}
       <Layout>
         <Content style={{ padding: "16px" }}>
           <Row gutter={[16, 16]}>
-            <CardsContainer data={data} projectedData={projectedData} />
+            <CardsContainer
+              data={data}
+              projectedData={projectedData}
+              levels={levels}
+            />
             <ActualDataTable data={data} />
           </Row>
         </Content>
