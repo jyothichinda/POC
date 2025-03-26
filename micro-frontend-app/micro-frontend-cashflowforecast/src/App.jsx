@@ -11,14 +11,7 @@ const { Sider, Content } = Layout;
 const App = () => {
   const [data, setData] = useState([]);
   const [projectedData, setProjectedData] = useState({});
-  const [levels, setLevels] = useState([
-    { level: "Bank Level", parentLevel: "Root" },
-    { level: "Instant Level", parentLevel: "Bank Level" },
-    { level: "B2B Level", parentLevel: "Instant Level" },
-    { level: "B2C Level", parentLevel: "Instant Level" },
-    { level: "STP Level", parentLevel: "Bank Level" },
-    { level: "Cheque Level", parentLevel: "Bank Level" },
-  ]);
+  const [levels, setLevels] = useState([]);
 
   const handleLevelClick = async (level, parentLevel) => {
     try {
@@ -26,7 +19,9 @@ const App = () => {
         `Fetching data for Level: ${level}, Parent Level: ${parentLevel}`
       );
       const res = await axios.get(
-        `http://10.10.0.11:3007/api/filter_data?level=${level}&parentLevel=${parentLevel}`
+        `http://192.168.1.2:9898/api/filter_data?level=${encodeURIComponent(
+          level
+        )}&parentLevel=${encodeURIComponent(parentLevel)}`
       );
       setData(res.data || []);
     } catch (error) {
@@ -38,7 +33,7 @@ const App = () => {
     try {
       const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
       const res = await axios.get(
-        `http://10.10.0.11:9898/projected_data?date=${today}`
+        `http://192.168.1.2:9898/projected_data?date=${today}`
       );
 
       const roundToTwo = (value) => Number(value).toFixed(2);
@@ -69,7 +64,7 @@ const App = () => {
   async function fetchData() {
     try {
       const res = await axios.get(
-        "http://10.10.0.11:9999/api/Current_date_transactions"
+        "http://192.168.1.2:9999/api/Current_date_transactions"
       );
       setData(res.data || []);
     } catch (error) {
@@ -79,8 +74,17 @@ const App = () => {
 
   async function fetchLevels() {
     try {
-      const res = await axios.get("http://10.10.0.11:3007/api/levels");
-      setLevels(res.data || []); // Set levels for SideNav
+      const res = await axios.get("http://192.168.1.2:9898/relation");
+
+      // Map the response to match the dropdown and menu format
+      const levels = res.data.map((item) => ({
+        value: item.level, // Use `level` as the value
+        label: item.level, // Use `level` as the label for dropdown
+        parentLevel: item.parent_Level, // Include `parent_Level` for hierarchy
+      }));
+
+      setLevels(levels); // Set levels for SideNav
+      console.log("Levels fetched and mapped:", levels);
     } catch (error) {
       console.error("Error fetching levels:", error);
     }
