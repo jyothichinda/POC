@@ -10,9 +10,9 @@ const GaugeChart = () => {
         value={value}
         minValue={0}
         maxValue={100}
-        needleColor="red"
-        startColor="green"
-        endColor="red"
+        needleColor="#55957E"
+        startColor="#00C49F"
+        endColor="#0088FE"
         segments={6}
         currentValueText={`${value}`}
         width={300}   // Set the width of the gauge chart

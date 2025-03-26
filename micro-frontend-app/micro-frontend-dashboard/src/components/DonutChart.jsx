@@ -8,7 +8,7 @@ const data = [
 
 ];
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28"]; // Define slice colors
+const COLORS = ["#0088FE", "#00C49F", "#87CEEB"]; // Define slice colors
 
 const DonutChart = () => {
   return (
