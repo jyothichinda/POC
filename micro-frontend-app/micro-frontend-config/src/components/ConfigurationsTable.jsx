@@ -8,8 +8,6 @@ import {
   Input,
   message,
   Select,
-  Tag,
-  DatePicker,
   Switch,
 } from "antd";
 import axios from "axios";
@@ -42,17 +40,17 @@ dayjs.extend(customParseFormat);
 
 const allColumns = [
   { title: "Level", dataIndex: "level", key: "level" },
-  { title: "Parent Level", dataIndex: "parentLevel", key: "parentLevel" },
-  { title: "Control Name", dataIndex: "controlName", key: "controlName" },
+  { title: "Parent Level", dataIndex: "parent_Level", key: "parent_Level" },
+  { title: "Control Name", dataIndex: "control_Name", key: "control_Name" },
   { title: "Status", dataIndex: "status", key: "status" },
   {
     title: "Last Updated By",
-    dataIndex: "lastUpdatedBy",
+    dataIndex: "last_Updated_By",
     key: "lastUpdatedBy",
   },
   {
     title: "Last Updated Time",
-    dataIndex: "lastUpdatedTime",
+    dataIndex: "last_Updated_Time",
     key: "lastUpdatedTime",
   },
   { title: "Action", dataIndex: "action", key: "action" },
@@ -97,47 +95,7 @@ const SortableItem = ({ column, isChecked, onToggle }) => {
   );
 };
 
-const ConfigurationsTable = ({
-  data = [
-    {
-      id: 1,
-      level: "Level 1",
-      parentLevel: "None",
-      controlName: "Control A",
-      rule: [{ condition: "Condition A", ruleValue: "Value A" }],
-      startDate: "2025-03-01",
-      endDate: "2025-03-31",
-      status: "Active",
-      lastUpdatedBy: "Admin",
-      lastUpdatedTime: "2025-03-24 10:00 AM",
-    },
-    {
-      id: 2,
-      level: "Level 2",
-      parentLevel: "Level 1",
-      controlName: "Control B",
-      rule: [{ condition: "Condition B", ruleValue: "Value B" }],
-      startDate: "2025-03-15",
-      endDate: "2025-04-15",
-      status: "Inactive",
-      lastUpdatedBy: "User1",
-      lastUpdatedTime: "2025-03-23 02:30 PM",
-    },
-    {
-      id: 3,
-      level: "Level 3",
-      parentLevel: "Level 2",
-      controlName: "Control C",
-      rule: [{ condition: "Condition C", ruleValue: "Value C" }],
-      startDate: "2025-03-20",
-      endDate: "2025-04-20",
-      status: "Active",
-      lastUpdatedBy: "User2",
-      lastUpdatedTime: "2025-03-22 11:45 AM",
-    },
-  ],
-  fetchData,
-}) => {
+const ConfigurationsTable = ({ data, fetchData }) => {
   // Load preferences from local storage
   const savedColumns =
     JSON.parse(localStorage.getItem("selectedColumns")) ||
@@ -152,9 +110,6 @@ const ConfigurationsTable = ({
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newLevel, setNewLevel] = useState("");
-  const [rule, setRule] = useState([]);
-  const [condition, setCondition] = useState("");
-  const [ruleValue, setRuleValue] = useState("");
   const [isParentEnabled, setIsParentEnabled] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal visibility
@@ -172,20 +127,19 @@ const ConfigurationsTable = ({
   const fetchLevels = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/api/levels");
-      setOptions(response.data.map((item) => ({ value: item, label: item })));
+      const response = await axios.get("http://192.168.1.2:9898/relation");
+
+      // Adjust mapping based on the actual response format
+      const levels = response?.data?.map((item) => ({
+        value: item.level, // Use `level` as the value
+        label: item.level, // Use `level` as the label for dropdown
+      }));
+
+      setOptions(levels || []); // Set dropdown options
     } catch (error) {
       message.error("Failed to load levels");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleAddRule = () => {
-    if (condition && ruleValue) {
-      setRules([...rule, { condition, value: ruleValue }]);
-      setCondition("");
-      setRuleValue("");
     }
   };
 
@@ -230,42 +184,46 @@ const ConfigurationsTable = ({
 
   const [form] = Form.useForm();
 
-  const handleAddLevel = async () => {
+  const handleAddLevel = () => {
     if (!newLevel) return message.error("Please enter a level name");
 
-    try {
-      setLoading(true);
-      await axios.post("/api/levels", { name: newLevel }); // Save to database
-      setOptions([...options, { value: newLevel, label: newLevel }]); // Update dropdown
-      message.success("Level added successfully");
-      setIsModalOpen(false); // Close the modal after successful addition
-      setNewLevel(""); // Reset the input field
-    } catch (error) {
-      message.error("Failed to add level");
-    } finally {
-      setLoading(false);
-    }
+    // Add the new level to the dropdown options in the UI
+    const updatedOptions = [...options, { value: newLevel, label: newLevel }];
+    setOptions(updatedOptions);
+
+    // Set the newly added level as the selected option
+    setSelectedLevel(newLevel);
+    form.setFieldsValue({ level: newLevel }); // Update the form field to reflect the selected level
+
+    message.success("Level added to the dropdown and selected");
+    setIsModalOpen(false); // Close the modal after adding the level
+    setNewLevel(""); // Reset the input field
   };
 
   // Function to handle form submission
   const handleSubmit = async (values) => {
     try {
-      // Assign "Root Level" if no parent level is selected
-      const payload = {
-        ...values,
-        parentLevel: values.parentLevel || "Root Level",
+      // Map form values to match the backend's expected field names
+      const data = {
+        level: values.level,
+        parent_Level: values.parent_Level || "Root Level", // Map to `parent_Level`
+        control_Name: values.control_Name, // Map to `control_Name`
+        status: values.status,
+        last_Updated_By: values.lastUpdatedBy, // Map to `last_Updated_By`
+        last_Updated_Time: new Date().toISOString(), // Map to `last_Updated_Time`
       };
 
       const response = await axios.post(
-        "http://10.10.0.11:9898/save/masterThrottle_configuration",
-        payload
+        "http://192.168.1.2:9898/save/configuration",
+        data
       );
       message.success("Configuration saved successfully!");
       setCreateModalVisible(false);
       form.resetFields();
-      // Refresh data after successful creation to refresh table
-      fetchData();
+      setNewLevel(""); // Reset the new level after submission
+      fetchData(); // Refresh data after successful creation
     } catch (error) {
+      console.error("Error making API call:", error);
       message.error("Failed to save configuration!");
     }
   };
@@ -273,24 +231,12 @@ const ConfigurationsTable = ({
   // Function to reset form to default values
   const resetConfigToDefault = () => {
     form.setFieldsValue({
-      controlName: "",
+      control_Name: "",
       status: "System",
       lastUpdatedBy: "",
       action: "Audit",
     });
   };
-
-  console.log("Data prop:", data);
-  console.log(
-    "Mapped dataSource:",
-    data.map((record, index) => ({
-      ...record,
-      key: record.id || index,
-      rule: record.rule.map((r) => `${r.condition}: ${r.ruleValue}`).join(", "),
-    }))
-  );
-
-  console.log("Filtered Columns:", filteredColumns);
 
   return (
     <div style={{ padding: "20px" }}>
@@ -370,14 +316,14 @@ const ConfigurationsTable = ({
           onFinish={handleSubmit}
           initialValues={{
             status: "System",
-            lastUpdatedTime: new Date().toISOString(),
+            lastUpdatedTime: new Date().toISOString(), // Add lastUpdatedTime here
             action: "Audit",
           }}
         >
           <Form.Item
             label="Level"
             name="level"
-            rule={[{ required: true, message: "Please enter level name" }]}
+            rules={[{ required: true, message: "Please enter level name" }]}
           >
             <Select
               showSearch
@@ -403,8 +349,9 @@ const ConfigurationsTable = ({
                   </div>
                 </>
               )}
-              options={options}
+              options={options} // Use the `options` state
               onChange={(value) => setSelectedLevel(value)} // Track the selected level
+              value={selectedLevel} // Ensure the selected level is displayed
             />
           </Form.Item>
 
@@ -418,8 +365,8 @@ const ConfigurationsTable = ({
           {isParentEnabled && (
             <Form.Item
               label="Parent Level"
-              name="parentLevel"
-              rule={[
+              name="parent_Level"
+              rules={[
                 { required: true, message: "Please select a parent level" },
               ]}
             >
@@ -434,8 +381,8 @@ const ConfigurationsTable = ({
 
           <Form.Item
             label="Control Name"
-            name="controlName"
-            rule={[{ required: true, message: "Please enter control name" }]}
+            name="control_Name"
+            rules={[{ required: true, message: "Please enter control name" }]}
           >
             <Input placeholder="Enter control name" />
           </Form.Item>
@@ -457,7 +404,7 @@ const ConfigurationsTable = ({
               Reset to Default
             </Button>
             <Button type="primary" htmlType="submit">
-              Done
+              Save
             </Button>
           </Form.Item>
         </Form>

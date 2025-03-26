@@ -25,7 +25,7 @@ const App = () => {
   async function fetchData() {
     try {
       const response = await axios.get(
-        "http://10.10.0.11:9898/get/masterThrottle_configuration"
+        "http://192.168.1.2:9898/get/configuration"
       );
       const formattedData = response.data.map((item) => ({
         ...item,
