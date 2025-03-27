@@ -8,38 +8,40 @@ const AreaChartContainer = ({ data }) => {
     return dayjs(new Date(...timeArray)).format("YYYY-MM-DD HH:mm");
   };
 
+  // Aggregate data to handle duplicates
+  const aggregatedData = data.reduce((acc, item) => {
+    const formattedTime = Array.isArray(item.time)
+      ? formatTimeArray(item.time)
+      : dayjs(item.time).format("YYYY-MM-DD HH:mm");
+
+    const key = `${formattedTime}-${item.type}`;
+    if (!acc[key]) {
+      acc[key] = { time: formattedTime, type: item.type, amount: 0 };
+    }
+    acc[key].amount += parseFloat(item.amount);
+    return acc;
+  }, {});
+
+  // Convert aggregated data back to an array
+  const processedData = Object.values(aggregatedData);
+
   // Extract and format timestamps
   const timeStamps = Array.from(
-    new Set(
-      data.map(
-        (item) =>
-          Array.isArray(item.time)
-            ? formatTimeArray(item.time) // Handle array format
-            : dayjs(item.time).format("YYYY-MM-DD HH:mm") // Handle string format
-      )
-    )
+    new Set(processedData.map((item) => item.time))
   ).sort((a, b) => dayjs(a).diff(dayjs(b)));
 
   // Generate Cash Inflow Data
   const cashInflowData = timeStamps.map((time) => {
-    const entry = data.find(
-      (item) =>
-        (Array.isArray(item.time)
-          ? formatTimeArray(item.time)
-          : dayjs(item.time).format("YYYY-MM-DD HH:mm")) === time &&
-        item.type === "Inflow"
+    const entry = processedData.find(
+      (item) => item.time === time && item.type === "Inflow"
     );
     return entry ? parseFloat(entry.amount) : 0;
   });
 
   // Generate Cash Outflow Data
   const cashOutflowData = timeStamps.map((time) => {
-    const entry = data.find(
-      (item) =>
-        (Array.isArray(item.time)
-          ? formatTimeArray(item.time)
-          : dayjs(item.time).format("YYYY-MM-DD HH:mm")) === time &&
-        item.type === "Outflow"
+    const entry = processedData.find(
+      (item) => item.time === time && item.type === "Outflow"
     );
     return entry ? parseFloat(entry.amount) : 0;
   });
