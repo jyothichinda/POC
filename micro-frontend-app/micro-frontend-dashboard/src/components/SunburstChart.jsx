@@ -14,7 +14,16 @@ const SunburstChart = ({ data }) => {
     const width = 400; // Set a fixed width in pixels
     const height = 400; // Set a fixed height in pixels
     const radius = Math.min(width, height) / 2;
-    const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+    // Define color palettes
+    const fixedCostsPalette = [
+      "#034C53",
+      "#006A71",
+      "#336D82",
+      "#48A6A7",
+      "#9ACBD0",
+    ];
+    const variableCostsPalette = ["#205781", "#143D60", "#27445D"];
 
     // Create a root hierarchy
     const root = d3.hierarchy(data).sum((d) => d.value || 0);
@@ -37,6 +46,30 @@ const SunburstChart = ({ data }) => {
       .append("g")
       .attr("transform", `translate(${width / 2},${height / 2})`);
 
+    // Function to assign colors dynamically
+    const getColor = (d) => {
+      if (d.data.name === "Fixed Costs") {
+        return fixedCostsPalette[0]; // Use the darkest color for the parent
+      } else if (
+        d.ancestors().some((ancestor) => ancestor.data.name === "Fixed Costs")
+      ) {
+        // Use lighter colors for children of "Fixed Costs"
+        const depth = d.depth - 1; // Subtract 1 to skip the root node
+        return fixedCostsPalette[depth % fixedCostsPalette.length];
+      } else if (d.data.name === "Variable Costs") {
+        return variableCostsPalette[0]; // Use the darkest color for the parent
+      } else if (
+        d
+          .ancestors()
+          .some((ancestor) => ancestor.data.name === "Variable Costs")
+      ) {
+        // Use lighter colors for children of "Variable Costs"
+        const depth = d.depth - 1; // Subtract 1 to skip the root node
+        return variableCostsPalette[depth % variableCostsPalette.length];
+      }
+      return "#ccc"; // Default color for other nodes
+    };
+
     // Draw arcs
     svg
       .selectAll("path")
@@ -44,7 +77,7 @@ const SunburstChart = ({ data }) => {
       .enter()
       .append("path")
       .attr("d", arc)
-      .style("fill", (d) => color(d.data.name))
+      .style("fill", getColor) // Assign colors dynamically
       .style("stroke", "#fff")
       .on("mouseover", function (event, d) {
         d3.select(this).style("opacity", 0.7);

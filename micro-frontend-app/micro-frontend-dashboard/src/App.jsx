@@ -18,39 +18,35 @@ const { Option } = Select;
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [projectedData, setProjectedData] = useState([]);
+  const [hourlyData, setHourlyData] = useState([]);
+  const [weeklyData, setWeeklyData] = useState([]);
+  const [dailyExpenses, setDailyExpenses] = useState({
+    name: "Daily Expenses",
+    children: [
+      {
+        name: "Fixed Costs",
+        children: [
+          { name: "Salaries", value: 30 },
+          { name: "Rent", value: 25 },
+        ],
+      },
+      {
+        name: "Variable Costs",
+        children: [
+          { name: "Inventory", value: 20 },
+          { name: "Marketing", value: 15 },
+          { name: "Utilities", value: 10 },
+        ],
+      },
+    ],
+  });
+
   const [txnData, setTxnData] = useState([]);
 
   const [selectedTimezone, setSelectedTimezone] = useState(
     localStorage.getItem("selectedTimezone") || "UTC"
   );
   const [currentTime, setCurrentTime] = useState(moment().tz(selectedTimezone));
-
-  const apiHourlyData = [
-    {
-      timestamp: "2024-02-25 00:00",
-      title: "Current Cash InFlow",
-      amount: 1000.5,
-      currency: "USD",
-    },
-    {
-      timestamp: "2024-02-25 00:00",
-      title: "Current Cash OutFlow",
-      amount: 800.75,
-      currency: "USD",
-    },
-    {
-      timestamp: "2024-02-25 03:00",
-      title: "Current Cash InFlow",
-      amount: 1200.0,
-      currency: "USD",
-    },
-    {
-      timestamp: "2024-02-25 03:00",
-      title: "Current Cash OutFlow",
-      amount: 950.3,
-      currency: "USD",
-    },
-  ];
 
   const apiMonthlyData = [
     {
@@ -85,7 +81,7 @@ const App = () => {
     localStorage.setItem("selectedTimezone", value);
   };
 
-  async function fetchProjectedData() {
+  const fetchProjectedData = async () => {
     try {
       const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
       const res = await axios.get(
@@ -107,9 +103,9 @@ const App = () => {
     } catch (error) {
       console.error("Error fetching projected data:", error);
     }
-  }
+  };
 
-  async function fetchTxnData() {
+  const fetchTxnData = async () => {
     try {
       const res = await axios.get(
         "http://192.168.1.2:9999/api/getAll_payments"
@@ -118,10 +114,32 @@ const App = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  }
+  };
+
+  const fetchHourlyData = async () => {
+    try {
+      const res = await axios.get(
+        "http://192.168.1.2:9999/api/get_hourly_payments"
+      );
+      setHourlyData(res.data || []);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const fetchWeeklyData = async () => {
+    try {
+      const res = await axios.get(
+        "http://192.168.1.2:9999/api/get_weekly_payments"
+      );
+      setWeeklyData(res.data || []);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   // Helper function to format keys into readable titles
-  function formatTitle(key) {
+  const formatTitle = (key) => {
     const titleMap = {
       projectedOpeningBalance: "Projected Opening Balance",
       projectedCashInflow: "Projected Cash Inflow",
@@ -131,7 +149,7 @@ const App = () => {
     };
 
     return titleMap[key] || key; // Fallback to the key if no mapping is found
-  }
+  };
 
   useEffect(() => {
     // Simulate loading
@@ -148,6 +166,8 @@ const App = () => {
   useEffect(() => {
     fetchProjectedData();
     fetchTxnData();
+    fetchHourlyData();
+    fetchWeeklyData();
   }, []);
 
   if (loading) return <DashBoardSkeleton />;
@@ -197,7 +217,7 @@ const App = () => {
       >
         <Col span={8}>
           <Card title="Net Balance" style={{ height: "100%" }}>
-            <AreaChartContainer data={apiHourlyData} />
+            <AreaChartContainer data={hourlyData} />
           </Card>
         </Col>
         <Col span={8}>
@@ -217,7 +237,7 @@ const App = () => {
         </Col>
         <Col span={8}>
           <Card title="Cash Outflows" style={{ height: "100%" }}>
-            <SunburstChart data={apiMonthlyData[0]} />
+            <SunburstChart data={dailyExpenses} />
           </Card>
         </Col>
       </Row>
@@ -226,7 +246,7 @@ const App = () => {
       <Row gutter={[16, 16]}>
         <Col span={8}>
           <Card style={{ height: "100%" }}>
-            <BarWithLineChartContainer data={apiMonthlyData[0]} />
+            <BarWithLineChartContainer data={weeklyData} />
           </Card>
         </Col>
         <Col span={8}>

@@ -2,35 +2,66 @@ import React from "react";
 import ReactApexChart from "react-apexcharts";
 
 const BarWithLineChartContainer = ({ data }) => {
+  // Extract categories (days) and series data
+  const categories = data.map((item) => item.day.slice(0, 3).toUpperCase()); // Extract first 3 characters and convert to uppercase
+  const inflowData = data.map((item) => item.totalInflow || 0); // Handle missing values
+  const outflowData = data.map((item) => item.totalOutflow || 0); // Handle missing values
+
   const chartOptions = {
-    ...data.options,
+    chart: {
+      type: "bar",
+      stacked: false,
+      toolbar: { show: false },
+    },
     xaxis: {
-      categories: data.categories,
+      categories, // Days of the week
     },
     yaxis: [
       {
-        title: { text: "Debt & Equity (in Thousands)" },
+        title: { text: "Amount (in Thousands)" },
         min: 0,
-        max: Math.ceil(
-          Math.max(...data.series[0].data, ...data.series[1].data) * 1.1
-        ),
         labels: {
-          formatter: (val) => `${val.toFixed(2)}`, // **Round to 2 decimal places**
+          formatter: (val) => `$${(val / 1000).toFixed(2)}k`, // Format as thousands
         },
       },
     ],
     stroke: {
-      width: [0, 0, 4], // Apply stroke width only for line series
+      width: [0, 0, 2], // Apply stroke width only for line series
     },
     markers: {
       size: [0, 0, 5], // Show markers for the line graph
     },
+    tooltip: {
+      shared: true,
+      intersect: false,
+      y: {
+        formatter: (val) => `$${val.toFixed(2)}`, // Format tooltip values
+      },
+    },
+    legend: {
+      position: "top",
+      horizontalAlign: "center",
+    },
   };
+
+  const chartSeries = [
+    {
+      name: "Inflow",
+      type: "bar",
+      data: inflowData,
+    },
+    {
+      name: "Outflow",
+      type: "bar",
+      data: outflowData,
+    },
+  ];
 
   return (
     <ReactApexChart
       options={chartOptions}
-      series={data.series}
+      series={chartSeries}
+      type="line"
       height={350}
     />
   );
